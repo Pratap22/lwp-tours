@@ -22,8 +22,6 @@ async function getPageData() {
     const baseUrl =
       process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
-      console.warn("Base URL: ", baseUrl)
-
     const [toursRes, contentRes] = await Promise.all([
       fetch(`${baseUrl}/api/tours`, fetchOptions),
       fetch(`${baseUrl}/api/content`, fetchOptions)
@@ -39,8 +37,9 @@ async function getPageData() {
     ]);
 
     return {
-      heroTours: toursData.tours.filter(tour => tour.isHero),
-      content: contentData
+      heroTours: toursData.tours.filter(tour => tour.isHero).slice(0, 6),
+      content: contentData,
+      tours: toursData.tours
     };
   } catch (error) {
     console.error('Error fetching page data:', error);
@@ -52,7 +51,7 @@ async function getPageData() {
 }
 
 export default async function Home() {
-  const { heroTours, content } = await getPageData();
+  const { heroTours, content, tours } = await getPageData();
 
   if (!content) {
     return (
@@ -78,7 +77,7 @@ export default async function Home() {
         <TravelThemes content={content.travelThemes} />
       )}
       {content.smallGroupTours?.isActive && (
-        <SmallGroupTours content={content.smallGroupTours} />
+        <SmallGroupTours content={content.smallGroupTours} tours={tours} />
       )}
       {content.whyChooseUs?.isActive && (
         <WhyChooseUs content={content.whyChooseUs} />

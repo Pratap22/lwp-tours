@@ -1,94 +1,113 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { use } from 'react';
-import ImageUpload from '../../../../components/ImageUpload';
-import { generateSlug } from '../../../../lib/utils';
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { use } from "react";
+import ImageUpload from "../../../../components/ImageUpload";
+import { generateSlug } from "../../../../lib/utils";
+import Image from "next/image";
 
 export default function EditTour({ params }) {
   const router = useRouter();
   const { slug } = use(params);
   const [formData, setFormData] = useState({
-    title: '',
-    slug: '',
-    description: '',
-    duration: '',
-    price: '',
-    imageUrl: '',
+    title: "",
+    slug: "",
+    description: "",
+    duration: "",
+    price: "",
+    imageUrl: "",
+    groupSize: "",
+    difficulty: "",
+    bestTime: "",
     isHero: false,
+    featured: false,
   });
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchTour = async () => {
       try {
-        const response = await fetch(`/api/tours/${slug}`);
-        if (!response.ok) throw new Error('Tour not found');
-        const tour = await response.json();
-        // Extract nights from duration format (e.g., "8 Days / 7 Nights" -> "7")
-        let durationInput = tour.duration;
-        if (tour.duration && tour.duration.includes('Nights')) {
-          const nightsMatch = tour.duration.match(/(\d+)\s+Nights/);
-          if (nightsMatch) {
-            durationInput = nightsMatch[1];
+        const res = await fetch(`/api/tours/${slug}`);
+        if (!res.ok) throw new Error("Failed to fetch tour");
+        const tour = await res.json();
+
+        // Extract number of nights from duration string
+        let durationNights = "";
+        if (tour.duration) {
+          const match = tour.duration.match(/(\d+)\s*Nights?/i);
+          if (match) {
+            durationNights = match[1];
+          } else {
+            // Fallback: try to extract any number from the duration
+            const numberMatch = tour.duration.match(/(\d+)/);
+            if (numberMatch) {
+              durationNights = numberMatch[1];
+            }
           }
         }
+
         setFormData({
           title: tour.title,
           slug: tour.slug,
           description: tour.description,
-          duration: durationInput,
-          price: tour.price.toString(),
-          imageUrl: tour.imageUrl || tour.image, // Handle both old and new field names
+          duration: durationNights,
+          price: tour.price,
+          imageUrl: tour.imageUrl || tour.image,
+          groupSize: tour.groupSize,
+          difficulty: tour.difficulty,
+          bestTime: tour.bestTime,
           isHero: tour.isHero,
+          featured: tour.featured || false,
         });
+        setIsLoading(false);
       } catch (err) {
-        setError(err.message);
-      } finally {
+        console.error(err);
+        setError("Failed to load tour");
         setIsLoading(false);
       }
     };
+
     fetchTour();
   }, [slug]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
 
     // Auto-generate slug from title
-    if (name === 'title') {
+    if (name === "title") {
       const slug = generateSlug(value);
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        slug: slug
+        slug: slug,
       }));
     }
   };
 
   const handleImageUpload = (imageUrl) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      imageUrl: imageUrl
+      imageUrl: imageUrl,
     }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSaving(true);
-    setError('');
+    setError("");
 
     try {
       // Convert duration if it's just a number
       const duration = formData.duration;
       let formattedDuration = duration;
-      
+
       const nights = parseInt(duration);
       if (!isNaN(nights) && nights > 0 && duration === nights.toString()) {
         const days = nights + 1;
@@ -97,24 +116,24 @@ export default function EditTour({ params }) {
 
       const tourData = {
         ...formData,
-        duration: formattedDuration
+        duration: formattedDuration,
       };
 
       const response = await fetch(`/api/tours/${slug}`, {
-        method: 'PUT',
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(tourData),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to update tour');
+        throw new Error(errorData.error || "Failed to update tour");
       }
 
       const result = await response.json();
-      router.push('/admin/tours');
+      router.push("/admin/tours");
     } catch (err) {
       setError(err.message);
     } finally {
@@ -133,12 +152,16 @@ export default function EditTour({ params }) {
     );
   }
 
-  if (error && error === 'Tour not found') {
+  if (error && error === "Tour not found") {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Tour Not Found</h1>
-          <p className="text-gray-600 mb-6">The tour you&apos;re trying to edit doesn&apos;t exist.</p>
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">
+            Tour Not Found
+          </h1>
+          <p className="text-gray-600 mb-6">
+            The tour you&apos;re trying to edit doesn&apos;t exist.
+          </p>
           <Link
             href="/admin/tours"
             className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
@@ -180,7 +203,10 @@ export default function EditTour({ params }) {
 
             {/* Title */}
             <div>
-              <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="title"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Tour Title *
               </label>
               <input
@@ -197,7 +223,10 @@ export default function EditTour({ params }) {
 
             {/* Slug */}
             <div>
-              <label htmlFor="slug" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="slug"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 URL Slug *
               </label>
               <input
@@ -217,7 +246,10 @@ export default function EditTour({ params }) {
 
             {/* Description */}
             <div>
-              <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="description"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Description *
               </label>
               <textarea
@@ -234,7 +266,10 @@ export default function EditTour({ params }) {
 
             {/* Duration */}
             <div>
-              <label htmlFor="duration" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="duration"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Duration (Nights) *
               </label>
               <input
@@ -249,13 +284,17 @@ export default function EditTour({ params }) {
                 placeholder="e.g., 7"
               />
               <p className="mt-1 text-sm text-gray-500">
-                Enter the number of nights. Days will be calculated automatically (nights + 1).
+                Enter the number of nights. Days will be calculated
+                automatically (nights + 1).
               </p>
             </div>
 
             {/* Price */}
             <div>
-              <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="price"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Price (USD) *
               </label>
               <input
@@ -265,35 +304,124 @@ export default function EditTour({ params }) {
                 value={formData.price}
                 onChange={handleInputChange}
                 required
-                min="0"
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
-                placeholder="e.g., 2499"
+                placeholder="e.g., 2500"
+              />
+            </div>
+
+            {/* Group Size */}
+            <div>
+              <label
+                htmlFor="groupSize"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
+                Group Size *
+              </label>
+              <input
+                type="text"
+                id="groupSize"
+                name="groupSize"
+                value={formData.groupSize}
+                onChange={handleInputChange}
+                required
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
+                placeholder="e.g., 2-8 people"
+              />
+            </div>
+
+            {/* Difficulty */}
+            <div>
+              <label
+                htmlFor="difficulty"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
+                Difficulty Level *
+              </label>
+              <select
+                id="difficulty"
+                name="difficulty"
+                value={formData.difficulty}
+                onChange={handleInputChange}
+                required
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
+              >
+                <option value="">Select difficulty</option>
+                <option value="Easy">Easy</option>
+                <option value="Moderate">Moderate</option>
+                <option value="Challenging">Challenging</option>
+                <option value="Difficult">Difficult</option>
+              </select>
+            </div>
+
+            {/* Best Time */}
+            <div>
+              <label
+                htmlFor="bestTime"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
+                Best Time to Visit *
+              </label>
+              <input
+                type="text"
+                id="bestTime"
+                name="bestTime"
+                value={formData.bestTime}
+                onChange={handleInputChange}
+                required
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
+                placeholder="e.g., March to May, September to November"
               />
             </div>
 
             {/* Image Upload */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Tour Image *
-              </label>
               <ImageUpload
-                onUploadComplete={handleImageUpload}
+                onImageUpload={handleImageUpload}
+                label="Tour Image *"
                 currentImage={formData.imageUrl}
               />
             </div>
 
-            {/* Is Hero */}
-            <div className="flex items-center">
+            {/* Is Hero Tour */}
+            <div className="flex items-center space-x-3">
               <input
                 type="checkbox"
                 id="isHero"
                 name="isHero"
                 checked={formData.isHero}
-                onChange={(e) => setFormData(prev => ({ ...prev, isHero: e.target.checked }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, isHero: e.target.checked }))
+                }
                 className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
               />
-              <label htmlFor="isHero" className="ml-2 block text-sm text-gray-700">
-                Feature this tour in the hero section
+              <label
+                htmlFor="isHero"
+                className="text-sm font-medium text-gray-700"
+              >
+                Show in Hero Section
+              </label>
+            </div>
+
+            {/* Featured Tour */}
+            <div className="flex items-center space-x-3">
+              <input
+                type="checkbox"
+                id="featured"
+                name="featured"
+                checked={formData.featured}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    featured: e.target.checked,
+                  }))
+                }
+                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+              />
+              <label
+                htmlFor="featured"
+                className="text-sm font-medium text-gray-700"
+              >
+                Featured Tour
               </label>
             </div>
 
@@ -303,10 +431,10 @@ export default function EditTour({ params }) {
                 type="submit"
                 disabled={isSaving}
                 className={`px-6 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors ${
-                  isSaving ? 'opacity-50 cursor-not-allowed' : ''
+                  isSaving ? "opacity-50 cursor-not-allowed" : ""
                 }`}
               >
-                {isSaving ? 'Saving...' : 'Save Changes'}
+                {isSaving ? "Saving..." : "Save Changes"}
               </button>
             </div>
           </form>
@@ -314,4 +442,4 @@ export default function EditTour({ params }) {
       </div>
     </div>
   );
-} 
+}

@@ -3,7 +3,7 @@
 import { useState, useRef } from 'react';
 import Image from 'next/image';
 
-export default function ImageUpload({ onImageUpload, currentImage = '' }) {
+export default function ImageUpload({ onImageUpload, currentImage = '', label = 'Image' }) {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [previewUrl, setPreviewUrl] = useState(currentImage);
@@ -14,7 +14,10 @@ export default function ImageUpload({ onImageUpload, currentImage = '' }) {
     if (!file) return;
 
     // Validate file type
-   
+    if (!file.type.startsWith('image/')) {
+      alert('Please select an image file');
+      return;
+    }
 
     // Validate file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
@@ -67,7 +70,7 @@ export default function ImageUpload({ onImageUpload, currentImage = '' }) {
   return (
     <div className="space-y-4">
       <label className="block text-sm font-medium text-gray-700 mb-2">
-        Tour Image *
+        {label}
       </label>
       
       {/* Upload Area */}
@@ -174,7 +177,7 @@ export default function ImageUpload({ onImageUpload, currentImage = '' }) {
             Or enter image URL manually
           </label>
           <input
-            type="url"
+            type="text"
             value={previewUrl}
             onChange={(e) => {
               setPreviewUrl(e.target.value);

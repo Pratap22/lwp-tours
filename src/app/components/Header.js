@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 
@@ -15,7 +15,17 @@ const defaultNavigation = [
 
 export default function Header({ content }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
+    
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   // Use content navigation if available, otherwise use default
   const navigation = content?.navigation?.isActive && content.navigation.items
     ? content.navigation.items
@@ -24,21 +34,23 @@ export default function Header({ content }) {
     : defaultNavigation;
 
   return (
-    <header className="bg-white shadow-sm sticky top-0 z-50">
+    <header className={`fixed w-full top-0 z-50 transition-all duration-300 ${
+      isScrolled ? 'bg-white shadow-sm' : 'bg-transparent'
+    }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link href={"/"}>
             <div className="flex-shrink-0">
               <div className="flex items-center">
-                <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                <div className={`w-10 h-10 ${isScrolled ? 'bg-blue-600' : 'bg-blue-600/80'} rounded-lg flex items-center justify-center transition-colors duration-300`}>
                   <span className="text-white font-bold text-lg">LWP</span>
                 </div>
                 <div className="ml-3">
-                  <h1 className="text-xl font-bold text-gray-900">
+                  <h1 className={`text-xl font-bold ${isScrolled ? 'text-gray-900' : 'text-white'} transition-colors duration-300`}>
                     LWP Travel & Tours
                   </h1>
-                  <p className="text-xs text-gray-600">Local Experts</p>
+                  <p className={`text-xs ${isScrolled ? 'text-gray-600' : 'text-white/80'} transition-colors duration-300`}>Local Experts</p>
                 </div>
               </div>
             </div>
@@ -50,7 +62,9 @@ export default function Header({ content }) {
               <Link
                 key={item.name}
                 href={item.href}
-                className="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors duration-200"
+                className={`${
+                  isScrolled ? 'text-gray-700 hover:text-blue-600' : 'text-white hover:text-white/80'
+                } px-3 py-2 text-sm font-medium transition-colors duration-300`}
               >
                 {item.name}
               </Link>
@@ -61,7 +75,11 @@ export default function Header({ content }) {
           <div className="hidden md:flex items-center">
             <Link
               href="/contact-us"
-              className="bg-blue-600 text-white px-6 py-2 rounded-full text-sm font-medium hover:bg-blue-700 transition-colors duration-200"
+              className={`${
+                isScrolled 
+                  ? 'bg-blue-600 hover:bg-blue-700 text-white' 
+                  : 'bg-white/20 hover:bg-white/30 text-white'
+              } px-6 py-2 rounded-full text-sm font-medium transition-all duration-300`}
             >
               Get Started
             </Link>
@@ -71,7 +89,9 @@ export default function Header({ content }) {
           <div className="md:hidden">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-gray-700 hover:text-blue-600 focus:outline-none focus:text-blue-600"
+              className={`${
+                isScrolled ? 'text-gray-700 hover:text-blue-600' : 'text-white hover:text-white/80'
+              } focus:outline-none transition-colors duration-300`}
             >
               {isMenuOpen ? (
                 <XMarkIcon className="h-6 w-6" />

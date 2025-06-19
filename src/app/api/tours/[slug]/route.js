@@ -35,11 +35,31 @@ export async function PUT(request, { params }) {
     const body = await request.json();
     
     // Validate required fields
-    const { title, slug: newSlug, description, duration, price, image } = body;
+    const { title, slug: newSlug, description, duration, price, imageUrl, groupSize, difficulty, bestTime } = body;
     
-    if (!title || !newSlug || !description || !duration || !price || !image) {
+    const requiredFields = {
+      title,
+      slug: newSlug,
+      description,
+      duration,
+      price,
+      imageUrl,
+      groupSize,
+      difficulty,
+      bestTime
+    };
+
+    const missingFields = Object.entries(requiredFields)
+      .filter(([_, value]) => !value)
+      .map(([key]) => key === 'slug' ? 'newSlug' : key);
+
+    if (missingFields.length > 0) {
       return NextResponse.json(
-        { error: 'All fields are required' },
+        { 
+          error: 'Required fields are missing',
+          missingFields: missingFields,
+          message: `Please provide the following required fields: ${missingFields.join(', ')}`
+        },
         { status: 400 }
       );
     }
@@ -55,21 +75,35 @@ export async function PUT(request, { params }) {
       }
     }
 
-    // Update tour
-    const updatedTour = await Tour.findOneAndUpdate(
-      { slug },
-      {
+    // First, find the current tour
+    const currentTour = await Tour.findOne({ slug });
+
+    // Update tour with all fields
+    const updateData = {
+      $set: {
         title,
         slug: newSlug,
         description,
         duration,
         price: Number(price),
-        image,
-      },
+        imageUrl,
+        groupSize,
+        difficulty,
+        bestTime,
+        isHero: Boolean(body.isHero),
+        featured: Boolean(body.featured),
+        included: body.included || currentTour?.included || []
+      }
+    };
+
+    const updatedTour = await Tour.findOneAndUpdate(
+      { slug },
+      updateData,
       { new: true, runValidators: true }
     );
 
     if (!updatedTour) {
+      console.log('Tour not found for slug:', slug);
       return NextResponse.json(
         { error: 'Tour not found' },
         { status: 404 }

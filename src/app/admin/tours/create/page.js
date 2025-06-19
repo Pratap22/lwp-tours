@@ -14,8 +14,12 @@ export default function CreateTour() {
     description: '',
     duration: '',
     price: '',
-    image: '',
+    imageUrl: '',
+    groupSize: '',
+    difficulty: '',
+    bestTime: '',
     isHero: false,
+    featured: false,
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -40,7 +44,7 @@ export default function CreateTour() {
   const handleImageUpload = (imageUrl) => {
     setFormData(prev => ({
       ...prev,
-      image: imageUrl
+      imageUrl: imageUrl
     }));
   };
 
@@ -203,38 +207,105 @@ export default function CreateTour() {
               <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-2">
                 Price (USD) *
               </label>
-              <div className="relative">
-                <span className="absolute left-3 top-2 text-gray-500">$</span>
-                <input
-                  type="number"
-                  id="price"
-                  name="price"
-                  value={formData.price}
-                  onChange={handleInputChange}
-                  required
-                  min="0"
-                  step="0.01"
-                  className="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
-                  placeholder="1899"
-                />
-              </div>
+              <input
+                type="number"
+                id="price"
+                name="price"
+                value={formData.price}
+                onChange={handleInputChange}
+                required
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
+                placeholder="e.g., 2500"
+              />
+            </div>
+
+            {/* Group Size */}
+            <div>
+              <label htmlFor="groupSize" className="block text-sm font-medium text-gray-700 mb-2">
+                Group Size *
+              </label>
+              <input
+                type="text"
+                id="groupSize"
+                name="groupSize"
+                value={formData.groupSize}
+                onChange={handleInputChange}
+                required
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
+                placeholder="e.g., 2-8 people"
+              />
+            </div>
+
+            {/* Difficulty */}
+            <div>
+              <label htmlFor="difficulty" className="block text-sm font-medium text-gray-700 mb-2">
+                Difficulty Level *
+              </label>
+              <select
+                id="difficulty"
+                name="difficulty"
+                value={formData.difficulty}
+                onChange={handleInputChange}
+                required
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
+              >
+                <option value="">Select difficulty</option>
+                <option value="Easy">Easy</option>
+                <option value="Moderate">Moderate</option>
+                <option value="Challenging">Challenging</option>
+                <option value="Difficult">Difficult</option>
+              </select>
+            </div>
+
+            {/* Best Time */}
+            <div>
+              <label htmlFor="bestTime" className="block text-sm font-medium text-gray-700 mb-2">
+                Best Time to Visit *
+              </label>
+              <input
+                type="text"
+                id="bestTime"
+                name="bestTime"
+                value={formData.bestTime}
+                onChange={handleInputChange}
+                required
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
+                placeholder="e.g., March to May, September to November"
+              />
             </div>
 
             {/* Image Upload */}
-            <ImageUpload onImageUpload={handleImageUpload} />
+            <div>
+              <ImageUpload onImageUpload={handleImageUpload} label="Tour Image *" />
+            </div>
 
-            {/* Hero Section */}
-            <div className="flex items-center gap-2">
+            {/* Is Hero Tour */}
+            <div className="flex items-center space-x-3">
               <input
                 type="checkbox"
                 id="isHero"
                 name="isHero"
                 checked={formData.isHero}
-                onChange={(e) => setFormData({ ...formData, isHero: e.target.checked })}
-                className="h-4 w-4"
+                onChange={(e) => setFormData(prev => ({ ...prev, isHero: e.target.checked }))}
+                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
               />
-              <label htmlFor="isHero" className="text-sm font-medium">
+              <label htmlFor="isHero" className="text-sm font-medium text-gray-700">
                 Show in Hero Section
+              </label>
+            </div>
+
+            {/* Featured Tour */}
+            <div className="flex items-center space-x-3">
+              <input
+                type="checkbox"
+                id="featured"
+                name="featured"
+                checked={formData.featured}
+                onChange={(e) => setFormData(prev => ({ ...prev, featured: e.target.checked }))}
+                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+              />
+              <label htmlFor="featured" className="text-sm font-medium text-gray-700">
+                Featured Tour
               </label>
             </div>
 

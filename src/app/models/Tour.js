@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const TourSchema = new mongoose.Schema({
   title: { type: String, required: true },
@@ -13,6 +13,7 @@ const TourSchema = new mongoose.Schema({
   bestTime: { type: String, required: true },
   included: [{ type: String }],
   isHero: { type: Boolean, default: false },
+  featured: { type: Boolean, default: false, required: false },
 });
 
-export default mongoose.models.Tour || mongoose.model('Tour', TourSchema); 
+export default mongoose.models.Tour || mongoose.model("Tour", TourSchema);

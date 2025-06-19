@@ -26,9 +26,29 @@ export async function POST(request) {
     // Validate required fields
     const { title, slug, description, duration, price, imageUrl, groupSize, difficulty, bestTime, included } = body;
     
-    if (!title || !slug || !description || !duration || !price || !imageUrl || !groupSize || !difficulty || !bestTime) {
+    const requiredFields = {
+      title,
+      slug,
+      description,
+      duration,
+      price,
+      imageUrl,
+      groupSize,
+      difficulty,
+      bestTime
+    };
+
+    const missingFields = Object.entries(requiredFields)
+      .filter(([_, value]) => !value)
+      .map(([key]) => key);
+
+    if (missingFields.length > 0) {
       return NextResponse.json(
-        { error: 'All fields are required' },
+        { 
+          error: 'Required fields are missing',
+          missingFields: missingFields,
+          message: `Please provide the following required fields: ${missingFields.join(', ')}`
+        },
         { status: 400 }
       );
     }
