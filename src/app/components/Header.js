@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const defaultNavigation = [
   { name: "About Us", href: "/about-us" },
@@ -16,15 +17,24 @@ const defaultNavigation = [
 export default function Header({ content }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const pathname = usePathname();
+  
+  // Only apply scroll behavior on home page
+  const isHomePage = pathname === "/";
   
   useEffect(() => {
+    if (!isHomePage) {
+      setIsScrolled(true); // Always show white header on non-home pages
+      return;
+    }
+    
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10);
     };
     
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [isHomePage]);
 
   // Use content navigation if available, otherwise use default
   const navigation = content?.navigation?.isActive && content.navigation.items
