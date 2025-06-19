@@ -5,19 +5,6 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 
-async function getHeroTours() {
-  try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/tours`, {
-      cache: 'no-store'
-    });
-    const data = await res.json();
-    return data.tours.filter(tour => tour.isHero);
-  } catch (error) {
-    console.error('Error fetching hero tours:', error);
-    return [];
-  }
-}
-
 export default function HeroSection({ heroTours = [] }) {
   console.log(heroTours)
   const [current, setCurrent] = useState(0);
