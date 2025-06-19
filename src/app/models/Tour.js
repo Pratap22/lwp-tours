@@ -1,0 +1,13 @@
+import mongoose from 'mongoose';
+
+const TourSchema = new mongoose.Schema({
+  title: { type: String, required: true },
+  slug: { type: String, required: true, unique: true },
+  description: { type: String, required: true },
+  duration: { type: String, required: true },
+  price: { type: Number, required: true },
+  image: { type: String, required: true },
+  createdAt: { type: Date, default: Date.now },
+});
+
+export default mongoose.models.Tour || mongoose.model('Tour', TourSchema); 
