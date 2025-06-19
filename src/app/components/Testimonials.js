@@ -10,32 +10,32 @@ export default function Testimonials() {
       name: "Pedro Swobodat",
       country: "USA",
       rating: 5,
-      text: "Recently, we travelled to Bhutan with the help local tour operator Bhutan Travel Center. Everything was planned so well that we made wonderful memories. our entire trip to Bhutan was amazing, we would love to recommend our host agent Bhutan Travel Center to everyone who plans to visit Bhutan"
+      text: "Recently, we travelled to Bhutan with the help local tour operator Bhutan Travel Center. Everything was planned so well that we made wonderful memories. our entire trip to Bhutan was amazing, we would love to recommend our host agent Bhutan Travel Center to everyone who plans to visit Bhutan",
     },
     {
       name: "Shaoqiong Wu",
       country: "UK",
       rating: 5,
-      text: "Thank you Bhutan Travel Center give me a wonderful trip and meaningful soul exploration, I will come back. This is not only a travel agent but a trusted friend in Bhutan."
+      text: "Thank you Bhutan Travel Center give me a wonderful trip and meaningful soul exploration, I will come back. This is not only a travel agent but a trusted friend in Bhutan.",
     },
     {
       name: "Joanna Rose Lydia",
       country: "Australia",
       rating: 5,
-      text: "Recently we embarked our trip to Bhutan which was organized by Bhutan Travel Center. We were welcomed warmly by the team of Bhutan Travel Center. From the day one, we were in loved with Bhutan, it was amazing to witness breathtaking views of snowcapped mountains and lush valleys."
+      text: "Recently we embarked our trip to Bhutan which was organized by Bhutan Travel Center. We were welcomed warmly by the team of Bhutan Travel Center. From the day one, we were in loved with Bhutan, it was amazing to witness breathtaking views of snowcapped mountains and lush valleys.",
     },
     {
       name: "Christopher Niclos",
       country: "USA",
       rating: 5,
-      text: "We planned for the Bhutan trip for the march 2024 through Bhutan Travel Center. They provided us the best most memorable experiences. from the initial inquiry to the end of our trip team BTC was incredibly helpful and professional."
+      text: "We planned for the Bhutan trip for the march 2024 through Bhutan Travel Center. They provided us the best most memorable experiences. from the initial inquiry to the end of our trip team BTC was incredibly helpful and professional.",
     },
     {
       name: "Daniel kozlow",
       country: "USA",
       rating: 5,
-      text: "I happened to discover while in India that I could travel solo on a custom-tailored trip planned by this amazing agency. They took care of my visa tickets itinerary and every possible detail. The two individuals assisting me a guide and a driver both were exceptional and kind and very informative."
-    }
+      text: "I happened to discover while in India that I could travel solo on a custom-tailored trip planned by this amazing agency. They took care of my visa tickets itinerary and every possible detail. The two individuals assisting me a guide and a driver both were exceptional and kind and very informative.",
+    },
   ];
 
   return (
@@ -78,7 +78,7 @@ export default function Testimonials() {
               </div>
               
               <p className="text-gray-600 leading-relaxed text-sm">
-                "{testimonial.text}"
+                &quot;{testimonial.text}&quot;
               </p>
             </div>
           ))}
@@ -99,4 +99,4 @@ export default function Testimonials() {
       </div>
     </section>
   );
-} 
+}

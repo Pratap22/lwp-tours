@@ -1,35 +1,35 @@
 "use client";
-import Image from 'next/image';
-import Link from 'next/link';
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import Image from "next/image";
+import Link from "next/link";
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function HeroSection() {
   const heroExperiences = [
     {
       title: "True Cultural Immersion",
-      subtitle: "Experience Bhutan's deeply spiritual culture and rich traditions.",
+      subtitle: "Experience Bhutan&apos;s deeply spiritual culture and rich traditions.",
       image: "/hero-cultural.jpg",
-      cta: "View Trips"
+      cta: "View Trips",
     },
     {
       title: "Bhutan's Festival Experience",
-      subtitle: "Explore Bhutan's spiritual depth at its lively festivals",
+      subtitle: "Explore Bhutan&apos;s spiritual depth at its lively festivals",
       image: "/hero-festival.jpg",
-      cta: "View Trips"
+      cta: "View Trips",
     },
     {
       title: "Trekking And Adventures",
-      subtitle: "Explore Challenging Trails And Connect With Bhutan's Natural Beauty.",
+      subtitle: "Explore Challenging Trails And Connect With Bhutan&apos;s Natural Beauty.",
       image: "/hero-trekking.jpg",
-      cta: "View Trips"
+      cta: "View Trips",
     },
     {
       title: "Bhutan in Luxury",
       subtitle: "Experience Bhutan in ultimate luxury and comfort",
       image: "/hero-luxury.jpg",
-      cta: "View Trips"
-    }
+      cta: "View Trips",
+    },
   ];
 
   const [current, setCurrent] = useState(0);
@@ -59,11 +59,12 @@ export default function HeroSection() {
             transition={{ duration: 0.6 }}
             className="absolute inset-0 w-full h-full"
           >
-            <img
+            <Image
               src={heroExperiences[current].image}
               alt={heroExperiences[current].title}
-              className="w-full h-full object-cover object-center"
-              draggable={false}
+              fill
+              style={{ objectFit: 'cover', objectPosition: 'center' }}
+              priority
             />
             <div className="absolute inset-0 bg-black/40" />
           </motion.div>
@@ -101,7 +102,9 @@ export default function HeroSection() {
             <button
               key={idx}
               onClick={() => setCurrent(idx)}
-              className={`w-3 h-3 rounded-full border-2 border-white ${idx === current ? 'bg-white' : 'bg-transparent'}`}
+              className={`w-3 h-3 rounded-full border-2 border-white ${
+                idx === current ? "bg-white" : "bg-transparent"
+              }`}
               aria-label={`Go to slide ${idx + 1}`}
             />
           ))}
@@ -116,19 +119,25 @@ export default function HeroSection() {
               <div className="w-16 h-16 bg-yellow-400 rounded-full flex items-center justify-center mx-auto mb-4">
                 <span className="text-2xl">🏆</span>
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Travel Excellence Awards</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                Travel Excellence Awards
+              </h3>
             </div>
             <div className="text-center">
               <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
                 <span className="text-2xl">🤝</span>
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Trustworthy Travels</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                Trustworthy Travels
+              </h3>
             </div>
             <div className="text-center">
               <div className="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
                 <span className="text-2xl">💰</span>
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Exceptional value</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                Exceptional value
+              </h3>
             </div>
           </div>
         </div>
@@ -143,19 +152,34 @@ export default function HeroSection() {
             </h2>
             <div className="max-w-4xl mx-auto text-lg text-gray-600 leading-relaxed">
               <p className="mb-6">
-                Located in the Himalayas, Bhutan is a truly breathtaking destination that has become increasingly popular among travelers in recent years. Bhutan's tourism philosophy is based on 'High Value, Low Impact' tourism, which aims to preserve the country's natural beauty and cultural heritage while providing visitors with a unique and authentic travel experience.
+                Located in the Himalayas, Bhutan is a truly breathtaking
+                destination that has become increasingly popular among travelers
+                in recent years. Bhutan&apos;s tourism philosophy is based on &apos;High
+                Value, Low Impact&apos; tourism, which aims to preserve the country&apos;s
+                natural beauty and cultural heritage while providing visitors
+                with a unique and authentic travel experience.
               </p>
               <p className="mb-6">
-                The Bhutanese have preserved a unique mix of culture, environment, and hospitality for centuries. It is a destination worth exploring. Discover and visit ancient fortresses, monasteries, beautiful landscapes, and a rich cultural tradition unlike any other place.
+                The Bhutanese have preserved a unique mix of culture,
+                environment, and hospitality for centuries. It is a destination
+                worth exploring. Discover and visit ancient fortresses,
+                monasteries, beautiful landscapes, and a rich cultural tradition
+                unlike any other place.
               </p>
               <p>
-                Visit Bhutan, where the old and current eras blend with the beautiful landscapes to create a unique journey. As a local Bhutan tour operator, we promise a variety of fulfilling experiences for your memorable trip to Bhutan.
+                Visit Bhutan, where the old and current eras blend with the
+                beautiful landscapes to create a unique journey. As a local
+                Bhutan tour operator, we promise a variety of fulfilling
+                experiences for your memorable trip to Bhutan.
               </p>
             </div>
           </div>
-          
+
           <div className="text-center">
-            <Link href='/about-us' className="bg-blue-600 text-white px-8 py-3 rounded-full text-lg font-semibold hover:bg-blue-700 transition-colors duration-200">
+            <Link
+              href="/about-us"
+              className="bg-blue-600 text-white px-8 py-3 rounded-full text-lg font-semibold hover:bg-blue-700 transition-colors duration-200"
+            >
               Meet our team
             </Link>
           </div>
@@ -171,16 +195,22 @@ export default function HeroSection() {
                 Custom-Made Journey
               </h2>
               <p className="text-lg text-gray-600 leading-relaxed mb-8">
-                At Bhutan Travel Center, we create more than just trips—we craft personalized experiences. Whether you're looking for deep cultural immersion, exclusive adventures or a romantic getaway, we design seamless journeys tailored to your needs.
+                At Bhutan Travel Center, we create more than just trips—we craft
+                personalized experiences. Whether you&apos;re looking for deep
+                cultural immersion, exclusive adventures or a romantic getaway,
+                we design seamless journeys tailored to your needs.
               </p>
               <button className="bg-green-600 text-white px-8 py-3 rounded-full text-lg font-semibold hover:bg-green-700 transition-colors duration-200">
                 speak to us
               </button>
             </div>
             <div className="bg-gradient-to-br from-blue-100 to-green-100 p-8 rounded-2xl">
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">Travel Theme</h3>
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                Travel Theme
+              </h3>
               <p className="text-gray-600">
-                Find your perfect experience with our personalized trips that match your interests.
+                Find your perfect experience with our personalized trips that
+                match your interests.
               </p>
             </div>
           </div>
@@ -188,4 +218,4 @@ export default function HeroSection() {
       </div>
     </section>
   );
-} 
+}
