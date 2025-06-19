@@ -21,7 +21,7 @@ async function getPageData() {
   try {
     // Get the base URL for API calls
     const baseUrl = process.env.NEXT_PUBLIC_API_URL 
-      ? `https://${process.env.NEXT_PUBLIC_API_URL}` 
+      ? `${process.env.NEXT_PUBLIC_API_URL}` 
       : 'http://localhost:3000';
 
     // Fetch both tours and content in parallel with absolute URLs
