@@ -20,8 +20,9 @@ const fetchOptions = {
 async function getPageData() {
   try {
     const baseUrl =
-      process.env.NEXT_PUBLIC_API_URL ||
-      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
+      process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+
+      console.warn("Base URL: ", baseUrl)
 
     const [toursRes, contentRes] = await Promise.all([
       fetch(`${baseUrl}/api/tours`, fetchOptions),
