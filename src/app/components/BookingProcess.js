@@ -1,5 +1,10 @@
-export default function BookingProcess() {
-  const steps = [
+export default function BookingProcess({ content }) {
+  // Don't render if section is disabled
+  if (!content?.isActive) {
+    return null;
+  }
+
+  const steps = content?.steps?.filter(step => step.isActive) || [
     {
       number: "1",
       title: "Plan Your Itineraries",
@@ -22,15 +27,21 @@ export default function BookingProcess() {
     }
   ];
 
+  // Add numbers to steps from database
+  const stepsWithNumbers = steps.map((step, index) => ({
+    ...step,
+    number: (index + 1).toString()
+  }));
+
   return (
     <section className="bg-white py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-gray-900 mb-6">
-            Practical Tips for Traveling to Bhutan
+            {content.title || "Practical Tips for Traveling to Bhutan"}
           </h2>
           <h3 className="text-2xl font-semibold text-gray-700 mb-8">
-            Bhutan Tour Booking Procedure
+            {content.subtitle || "Bhutan Tour Booking Procedure"}
           </h3>
           <p className="text-lg text-gray-600 max-w-4xl mx-auto leading-relaxed">
             Wondering how to plan an unforgettable trip to Bhutan? Here are four simple steps to ensure your Bhutan travel experience is smooth and well-organized.
@@ -38,7 +49,7 @@ export default function BookingProcess() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {steps.map((step, index) => (
+          {stepsWithNumbers.map((step, index) => (
             <div
               key={index}
               className="bg-gray-50 rounded-xl p-8 card-hover border border-gray-200"

@@ -15,6 +15,7 @@ export default function CreateTour() {
     duration: '',
     price: '',
     image: '',
+    isHero: false,
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -221,6 +222,21 @@ export default function CreateTour() {
 
             {/* Image Upload */}
             <ImageUpload onImageUpload={handleImageUpload} />
+
+            {/* Hero Section */}
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="isHero"
+                name="isHero"
+                checked={formData.isHero}
+                onChange={(e) => setFormData({ ...formData, isHero: e.target.checked })}
+                className="h-4 w-4"
+              />
+              <label htmlFor="isHero" className="text-sm font-medium">
+                Show in Hero Section
+              </label>
+            </div>
 
             {/* Submit Button */}
             <div className="flex justify-end space-x-4 pt-6">

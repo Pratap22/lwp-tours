@@ -3,161 +3,116 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 
-export default function HeroSection() {
-  const [heroContent, setHeroContent] = useState(null);
-  const [loading, setLoading] = useState(true);
+async function getHeroTours() {
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/tours`, {
+      cache: 'no-store'
+    });
+    const data = await res.json();
+    return data.tours.filter(tour => tour.isHero);
+  } catch (error) {
+    console.error('Error fetching hero tours:', error);
+    return [];
+  }
+}
 
-  useEffect(() => {
-    fetchHeroContent();
-  }, []);
-
-  const fetchHeroContent = async () => {
-    try {
-      const response = await fetch('/api/content');
-      const data = await response.json();
-      setHeroContent(data.heroCarousel);
-    } catch (error) {
-      console.error('Error fetching hero content:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Fallback content if API fails or content is not available
-  const fallbackHeroExperiences = [
-    {
-      title: "True Cultural Immersion",
-      subtitle: "Experience Bhutan's deeply spiritual culture and rich traditions.",
-      image: "/hero-cultural.jpg",
-      cta: "View Trips",
-    },
-    {
-      title: "Bhutan's Festival Experience",
-      subtitle: "Explore Bhutan's spiritual depth at its lively festivals",
-      image: "/hero-festival.jpg",
-      cta: "View Trips",
-    },
-    {
-      title: "Trekking And Adventures",
-      subtitle: "Explore Challenging Trails And Connect With Bhutan's Natural Beauty.",
-      image: "/hero-trekking.jpg",
-      cta: "View Trips",
-    },
-    {
-      title: "Bhutan in Luxury",
-      subtitle: "Experience Bhutan in ultimate luxury and comfort",
-      image: "/hero-luxury.jpg",
-      cta: "View Trips",
-    },
-  ];
-
-  // Use database content if available, otherwise use fallback
-  const heroExperiences = heroContent?.slides?.filter(slide => slide.isActive) || fallbackHeroExperiences;
-  const autoplaySpeed = heroContent?.autoplaySpeed || 4000;
-
+export default function HeroSection({ heroTours = [] }) {
+  console.log(heroTours)
   const [current, setCurrent] = useState(0);
-  const length = heroExperiences.length;
+  const length = heroTours.length;
 
-  // Autoplay effect
   useEffect(() => {
-    if (!heroContent?.isActive) return;
+    if (!length) return;
     
     const timer = setTimeout(() => {
       setCurrent((prev) => (prev + 1) % length);
-    }, autoplaySpeed);
+    }, 5000); // Change slide every 5 seconds
+    
     return () => clearTimeout(timer);
-  }, [current, length, autoplaySpeed, heroContent?.isActive]);
+  }, [current, length]);
 
-  const prevSlide = () => setCurrent((prev) => (prev - 1 + length) % length);
-  const nextSlide = () => setCurrent((prev) => (prev + 1) % length);
+  const prevSlide = () => {
+    setCurrent(current === 0 ? length - 1 : current - 1);
+  };
 
-  // Don't render if section is disabled
-  if (!heroContent?.isActive && !loading) {
+  const nextSlide = () => {
+    setCurrent((current + 1) % length);
+  };
+
+  if (!heroTours.length) {
     return null;
   }
 
-  if (loading) {
-    return (
-      <div className="relative h-[80vh] md:h-[90vh] w-full bg-gray-200 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-      </div>
-    );
-  }
-
   return (
-    <section className="relative">
-      {/* Hero Experiences Carousel as Main Hero Banner */}
-      <div className="relative h-[80vh] md:h-[90vh] w-full overflow-hidden">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={current}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.6 }}
-            className="absolute inset-0 w-full h-full"
+    <section className="relative h-[600px] md:h-[500px]">
+      {/* Main Carousel */}
+      <div className="relative h-full overflow-hidden">
+        {heroTours.map((tour, index) => (
+          <div
+            key={tour._id}
+            className={`absolute inset-0 transition-opacity duration-1000 ${
+              index === current ? 'opacity-100 z-10' : 'opacity-0 z-0'
+            }`}
           >
-            <Image
-              src={heroExperiences[current].image}
-              alt={heroExperiences[current].title}
-              fill
-              style={{ objectFit: 'cover', objectPosition: 'center' }}
-              priority
-            />
-            <div className="absolute inset-0 bg-black/40" />
-          </motion.div>
-        </AnimatePresence>
-        {/* Overlayed Content */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center z-10 text-center px-4">
-          <h1 className="text-4xl md:text-6xl font-extrabold text-white mb-4 drop-shadow-lg">
-            {heroExperiences[current].title}
-          </h1>
-          <p className="text-lg md:text-2xl text-white mb-8 font-medium drop-shadow-lg">
-            {heroExperiences[current].subtitle}
-          </p>
-          <button className="bg-white/80 text-blue-700 px-8 py-3 rounded-full text-lg font-semibold hover:bg-white transition-colors duration-200 shadow">
-            {heroExperiences[current].cta}
-          </button>
-        </div>
-        {/* Navigation Arrows */}
-        <button
-          onClick={prevSlide}
-          className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white rounded-full p-3 z-20 text-2xl"
-          aria-label="Previous"
-        >
-          &#8592;
-        </button>
-        <button
-          onClick={nextSlide}
-          className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white rounded-full p-3 z-20 text-2xl"
-          aria-label="Next"
-        >
-          &#8594;
-        </button>
-        {/* Dots */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2 z-20">
-          {heroExperiences.map((_, idx) => (
-            <button
-              key={idx}
-              onClick={() => setCurrent(idx)}
-              className={`w-3 h-3 rounded-full border-2 border-white ${
-                idx === current ? "bg-white" : "bg-transparent"
-              }`}
-              aria-label={`Go to slide ${idx + 1}`}
-            />
-          ))}
-        </div>
+            <div className="relative w-full h-full">
+              <Image 
+                src={tour.imageUrl}
+                alt={tour.title}
+                fill
+                className="object-cover"
+                priority={index === 0}
+              />
+              <div className="absolute inset-0 bg-black/40" />
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white p-4">
+                <h2 className="text-4xl md:text-5xl font-bold mb-4 max-w-3xl">
+                  {tour.title}
+                </h2>
+                <p className="text-lg md:text-xl mb-8 max-w-2xl">
+                  {tour.description}
+                </p>
+                <Link
+                  href={`/tours/${tour.slug}`}
+                  className="bg-blue-600 text-white px-8 py-3 rounded-full text-lg font-semibold hover:bg-blue-700 transition-colors duration-200"
+                >
+                  View Tour
+                </Link>
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
 
-      {/* Awards Section */}
-      <AwardsSection />
+      {/* Navigation Arrows */}
+      <button
+        onClick={prevSlide}
+        className="absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-white/20 hover:bg-white/40 text-white rounded-full p-2 transition-colors duration-200"
+        aria-label="Previous slide"
+      >
+        <ChevronLeftIcon className="h-6 w-6" />
+      </button>
+      <button
+        onClick={nextSlide}
+        className="absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-white/20 hover:bg-white/40 text-white rounded-full p-2 transition-colors duration-200"
+        aria-label="Next slide"
+      >
+        <ChevronRightIcon className="h-6 w-6" />
+      </button>
 
-      {/* About Bhutan Section */}
-      <AboutBhutanSection />
-
-      {/* Custom Journey Section */}
-      <CustomJourneySection />
+      {/* Dots Navigation */}
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex space-x-2">
+        {heroTours.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => setCurrent(index)}
+            className={`w-3 h-3 rounded-full transition-colors duration-200 ${
+              index === current ? 'bg-white' : 'bg-white/50'
+            }`}
+            aria-label={`Go to slide ${index + 1}`}
+          />
+        ))}
+      </div>
     </section>
   );
 }

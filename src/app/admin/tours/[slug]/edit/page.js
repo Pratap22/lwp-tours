@@ -16,7 +16,8 @@ export default function EditTour({ params }) {
     description: '',
     duration: '',
     price: '',
-    image: '',
+    imageUrl: '',
+    isHero: false,
   });
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -42,7 +43,8 @@ export default function EditTour({ params }) {
           description: tour.description,
           duration: durationInput,
           price: tour.price.toString(),
-          image: tour.image,
+          imageUrl: tour.imageUrl || tour.image, // Handle both old and new field names
+          isHero: tour.isHero,
         });
       } catch (err) {
         setError(err.message);
@@ -73,7 +75,7 @@ export default function EditTour({ params }) {
   const handleImageUpload = (imageUrl) => {
     setFormData(prev => ({
       ...prev,
-      image: imageUrl
+      imageUrl: imageUrl
     }));
   };
 
@@ -198,27 +200,18 @@ export default function EditTour({ params }) {
               <label htmlFor="slug" className="block text-sm font-medium text-gray-700 mb-2">
                 URL Slug *
               </label>
-              <div className="relative">
-                <input
-                  type="text"
-                  id="slug"
-                  name="slug"
-                  value={formData.slug}
-                  onChange={handleInputChange}
-                  required
-                  className="w-full px-3 py-2 pr-20 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
-                  placeholder="e.g., cultural-immersion-tour"
-                />
-                {formData.title && (
-                  <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
-                    <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
-                      Auto-generated
-                    </span>
-                  </div>
-                )}
-              </div>
+              <input
+                type="text"
+                id="slug"
+                name="slug"
+                value={formData.slug}
+                onChange={handleInputChange}
+                required
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
+                placeholder="e.g., cultural-immersion-tour"
+              />
               <p className="mt-1 text-sm text-gray-500">
-                This will be used in the tour URL: /tours/[slug]
+                This will be used in the URL: /tours/your-slug
               </p>
             </div>
 
@@ -235,7 +228,7 @@ export default function EditTour({ params }) {
                 required
                 rows={4}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
-                placeholder="Describe the tour experience, highlights, and what makes it special..."
+                placeholder="Describe the tour experience..."
               />
             </div>
 
@@ -245,17 +238,18 @@ export default function EditTour({ params }) {
                 Duration (Nights) *
               </label>
               <input
-                type="text"
+                type="number"
                 id="duration"
                 name="duration"
                 value={formData.duration}
                 onChange={handleInputChange}
                 required
+                min="1"
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
-                placeholder="e.g., 6 or 7 Days / 6 Nights"
+                placeholder="e.g., 7"
               />
               <p className="mt-1 text-sm text-gray-500">
-                Type just the number of nights (e.g., 6) or the full format (e.g., 7 Days / 6 Nights)
+                Enter the number of nights. Days will be calculated automatically (nights + 1).
               </p>
             </div>
 
@@ -264,38 +258,53 @@ export default function EditTour({ params }) {
               <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-2">
                 Price (USD) *
               </label>
-              <div className="relative">
-                <span className="absolute left-3 top-2 text-gray-500">$</span>
-                <input
-                  type="number"
-                  id="price"
-                  name="price"
-                  value={formData.price}
-                  onChange={handleInputChange}
-                  required
-                  min="0"
-                  step="0.01"
-                  className="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
-                  placeholder="1899"
-                />
-              </div>
+              <input
+                type="number"
+                id="price"
+                name="price"
+                value={formData.price}
+                onChange={handleInputChange}
+                required
+                min="0"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
+                placeholder="e.g., 2499"
+              />
             </div>
 
             {/* Image Upload */}
-            <ImageUpload onImageUpload={handleImageUpload} currentImage={formData.image} />
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Tour Image *
+              </label>
+              <ImageUpload
+                onUploadComplete={handleImageUpload}
+                currentImage={formData.imageUrl}
+              />
+            </div>
+
+            {/* Is Hero */}
+            <div className="flex items-center">
+              <input
+                type="checkbox"
+                id="isHero"
+                name="isHero"
+                checked={formData.isHero}
+                onChange={(e) => setFormData(prev => ({ ...prev, isHero: e.target.checked }))}
+                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+              />
+              <label htmlFor="isHero" className="ml-2 block text-sm text-gray-700">
+                Feature this tour in the hero section
+              </label>
+            </div>
 
             {/* Submit Button */}
-            <div className="flex justify-end space-x-4 pt-6">
-              <Link
-                href="/admin/tours"
-                className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
-              >
-                Cancel
-              </Link>
+            <div className="flex justify-end">
               <button
                 type="submit"
                 disabled={isSaving}
-                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className={`px-6 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors ${
+                  isSaving ? 'opacity-50 cursor-not-allowed' : ''
+                }`}
               >
                 {isSaving ? 'Saving...' : 'Save Changes'}
               </button>

@@ -11,11 +11,28 @@ export const metadata = {
   keywords: "Bhutan travel, Bhutan tours, Bhutan tourism, cultural tours, trekking, luxury travel",
 };
 
-export default function RootLayout({ children }) {
+async function getContent() {
+  try {
+    const res = await fetch('/api/content', {
+      cache: 'no-store'
+    });
+    if (!res.ok) {
+      throw new Error('Failed to fetch content');
+    }
+    return res.json();
+  } catch (error) {
+    console.error('Error fetching content:', error);
+    return null;
+  }
+}
+
+export default async function RootLayout({ children }) {
+  const content = await getContent();
+
   return (
     <html lang="en">
       <body className={`${inter.className} bg-white`}>
-        <Header />
+        <Header content={content} />
         <main>{children}</main>
         <Footer />
       </body>

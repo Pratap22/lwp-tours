@@ -3,18 +3,25 @@ import { useState } from "react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 
-export default function Header() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+const defaultNavigation = [
+  { name: "About Us", href: "/about-us" },
+  { name: "Tours", href: "/tours" },
+  { name: "Travel Info", href: "/travel-info" },
+  { name: "Awards", href: "/awards" },
+  { name: "Why Us", href: "/why-us" },
+  { name: "Contact Us", href: "/contact-us" },
+  { name: "Admin", href: "/admin" },
+];
 
-  const navigation = [
-    { name: "About Us", href: "/about-us" },
-    { name: "Tours", href: "/tours" },
-    { name: "Travel Info", href: "/travel-info" },
-    { name: "Awards", href: "/awards" },
-    { name: "Why Us", href: "/why-us" },
-    { name: "Contact Us", href: "/contact-us" },
-    { name: "Admin", href: "/admin" },
-  ];
+export default function Header({ content }) {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  
+  // Use content navigation if available, otherwise use default
+  const navigation = content?.navigation?.isActive && content.navigation.items
+    ? content.navigation.items
+        .filter(item => item.isActive)
+        .sort((a, b) => a.order - b.order)
+    : defaultNavigation;
 
   return (
     <header className="bg-white shadow-sm sticky top-0 z-50">

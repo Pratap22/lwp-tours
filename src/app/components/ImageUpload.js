@@ -14,10 +14,7 @@ export default function ImageUpload({ onImageUpload, currentImage = '' }) {
     if (!file) return;
 
     // Validate file type
-    if (!file.type.startsWith('image/')) {
-      alert('Please select an image file');
-      return;
-    }
+   
 
     // Validate file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {

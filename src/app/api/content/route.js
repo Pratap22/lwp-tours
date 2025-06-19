@@ -228,6 +228,17 @@ export async function GET() {
               order: 3
             }
           ]
+        },
+        navigation: {
+          isActive: true,
+          items: [
+            { name: "About Us", href: "/about-us", isActive: true, order: 0 },
+            { name: "Tours", href: "/tours", isActive: true, order: 1 },
+            { name: "Travel Info", href: "/travel-info", isActive: true, order: 2 },
+            { name: "Awards", href: "/awards", isActive: true, order: 3 },
+            { name: "Why Us", href: "/why-us", isActive: true, order: 4 },
+            { name: "Contact Us", href: "/contact-us", isActive: true, order: 5 }
+          ]
         }
       });
     }

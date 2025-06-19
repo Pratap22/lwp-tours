@@ -1,16 +1,18 @@
 import { NextResponse } from 'next/server';
-import { dbConnect } from '../../lib/mongodb';
-import Tour from '../../models/Tour';
+import { dbConnect } from '@/app/lib/mongodb';
+import Tour from '@/app/models/Tour';
 
 export async function GET() {
   try {
-    await dbConnect();
-    const tours = await Tour.find({}).sort({ createdAt: -1 });
-    return NextResponse.json(tours);
+    const db = await dbConnect();
+
+    const tours = await Tour.find({}).lean();
+
+    return NextResponse.json({ tours });
   } catch (error) {
     console.error('Error fetching tours:', error);
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Internal server error', details: error.message },
       { status: 500 }
     );
   }
@@ -22,9 +24,9 @@ export async function POST(request) {
     const body = await request.json();
     
     // Validate required fields
-    const { title, slug, description, duration, price, image } = body;
+    const { title, slug, description, duration, price, imageUrl, groupSize, difficulty, bestTime, included } = body;
     
-    if (!title || !slug || !description || !duration || !price || !image) {
+    if (!title || !slug || !description || !duration || !price || !imageUrl || !groupSize || !difficulty || !bestTime) {
       return NextResponse.json(
         { error: 'All fields are required' },
         { status: 400 }
@@ -47,7 +49,11 @@ export async function POST(request) {
       description,
       duration,
       price: Number(price),
-      image,
+      imageUrl,
+      groupSize,
+      difficulty,
+      bestTime,
+      included: included || [],
     });
 
     await tour.save();

@@ -1,5 +1,10 @@
-export default function TravelThemes() {
-  const travelThemes = [
+export default function TravelThemes({ content }) {
+  // Don't render if section is disabled
+  if (!content?.isActive) {
+    return null;
+  }
+
+  const travelThemes = content?.themes?.filter(theme => theme.isActive) || [
     {
       title: "Cultural Immersion Tour",
       description: "Experience authentic Bhutanese culture and traditions",
@@ -56,15 +61,22 @@ export default function TravelThemes() {
     }
   ];
 
+  // Add colors to themes from database
+  const colors = ["bg-blue-500", "bg-red-500", "bg-green-500", "bg-yellow-500", "bg-purple-500", "bg-indigo-500", "bg-pink-500", "bg-orange-500", "bg-teal-500"];
+  const themesWithColors = travelThemes.map((theme, index) => ({
+    ...theme,
+    color: colors[index % colors.length]
+  }));
+
   return (
     <section className="bg-gray-50 py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-gray-900 mb-6">
-            Find your perfect experience
+            {content.title || "Find your perfect experience"}
           </h2>
           <h3 className="text-2xl font-semibold text-gray-700 mb-8">
-            Personalized trips to match your interests
+            {content.subtitle || "Personalized trips to match your interests"}
           </h3>
           <p className="text-lg text-gray-600 max-w-4xl mx-auto leading-relaxed">
             Bhutan offers a wealth of experiences for all travelers. Immerse yourself in culture, join lively festivals, embark on wildlife safaris, relax in retreats or cozy homestays and hotels, or plan an unforgettable occasion. We customize itineraries that perfectly match your interests and travel style.
@@ -72,7 +84,7 @@ export default function TravelThemes() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {travelThemes.map((theme, index) => (
+          {themesWithColors.map((theme, index) => (
             <div
               key={index}
               className="bg-white rounded-xl shadow-lg p-6 card-hover border border-gray-100"

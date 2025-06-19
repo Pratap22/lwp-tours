@@ -1,40 +1,45 @@
-export default function Testimonials() {
-  const testimonials = [
+export default function Testimonials({ content }) {
+  // Don't render if section is disabled
+  if (!content?.isActive) {
+    return null;
+  }
+
+  const testimonials = content?.testimonials?.filter(testimonial => testimonial.isActive) || [
     {
       name: "Achim Schulz",
-      country: "Germany",
+      location: "Germany",
       rating: 5,
-      text: "We had booked a 12 day trip. First and foremost, I would like to thank the Bhutan Travel center for arranging amazing trip and our two excellent guides and the absolutely careful driver. A visit to Bhutan is definitely worth it because of the absolutely impressive nature. If we ever have the opportunity to travel to Bhutan again, we will definitely book with Bhutan Travel Center again because of their very good experiences."
+      content: "We had booked a 12 day trip. First and foremost, I would like to thank the Bhutan Travel center for arranging amazing trip and our two excellent guides and the absolutely careful driver. A visit to Bhutan is definitely worth it because of the absolutely impressive nature. If we ever have the opportunity to travel to Bhutan again, we will definitely book with Bhutan Travel Center again because of their very good experiences."
     },
     {
       name: "Pedro Swobodat",
-      country: "USA",
+      location: "USA",
       rating: 5,
-      text: "Recently, we travelled to Bhutan with the help local tour operator Bhutan Travel Center. Everything was planned so well that we made wonderful memories. our entire trip to Bhutan was amazing, we would love to recommend our host agent Bhutan Travel Center to everyone who plans to visit Bhutan",
+      content: "Recently, we travelled to Bhutan with the help local tour operator Bhutan Travel Center. Everything was planned so well that we made wonderful memories. our entire trip to Bhutan was amazing, we would love to recommend our host agent Bhutan Travel Center to everyone who plans to visit Bhutan",
     },
     {
       name: "Shaoqiong Wu",
-      country: "UK",
+      location: "UK",
       rating: 5,
-      text: "Thank you Bhutan Travel Center give me a wonderful trip and meaningful soul exploration, I will come back. This is not only a travel agent but a trusted friend in Bhutan.",
+      content: "Thank you Bhutan Travel Center give me a wonderful trip and meaningful soul exploration, I will come back. This is not only a travel agent but a trusted friend in Bhutan.",
     },
     {
       name: "Joanna Rose Lydia",
-      country: "Australia",
+      location: "Australia",
       rating: 5,
-      text: "Recently we embarked our trip to Bhutan which was organized by Bhutan Travel Center. We were welcomed warmly by the team of Bhutan Travel Center. From the day one, we were in loved with Bhutan, it was amazing to witness breathtaking views of snowcapped mountains and lush valleys.",
+      content: "Recently we embarked our trip to Bhutan which was organized by Bhutan Travel Center. We were welcomed warmly by the team of Bhutan Travel Center. From the day one, we were in loved with Bhutan, it was amazing to witness breathtaking views of snowcapped mountains and lush valleys.",
     },
     {
       name: "Christopher Niclos",
-      country: "USA",
+      location: "USA",
       rating: 5,
-      text: "We planned for the Bhutan trip for the march 2024 through Bhutan Travel Center. They provided us the best most memorable experiences. from the initial inquiry to the end of our trip team BTC was incredibly helpful and professional.",
+      content: "We planned for the Bhutan trip for the march 2024 through Bhutan Travel Center. They provided us the best most memorable experiences. from the initial inquiry to the end of our trip team BTC was incredibly helpful and professional.",
     },
     {
       name: "Daniel kozlow",
-      country: "USA",
+      location: "USA",
       rating: 5,
-      text: "I happened to discover while in India that I could travel solo on a custom-tailored trip planned by this amazing agency. They took care of my visa tickets itinerary and every possible detail. The two individuals assisting me a guide and a driver both were exceptional and kind and very informative.",
+      content: "I happened to discover while in India that I could travel solo on a custom-tailored trip planned by this amazing agency. They took care of my visa tickets itinerary and every possible detail. The two individuals assisting me a guide and a driver both were exceptional and kind and very informative.",
     },
   ];
 
@@ -43,10 +48,10 @@ export default function Testimonials() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-gray-900 mb-6">
-            Testimonials
+            {content.title || "Testimonials"}
           </h2>
           <h3 className="text-2xl font-semibold text-gray-700 mb-8">
-            Our Guests are Our Best Ambassadors—Hear Their Stories.
+            {content.subtitle || "Our Guests are Our Best Ambassadors—Hear Their Stories."}
           </h3>
           <p className="text-lg text-gray-600 max-w-3xl mx-auto">
             They Loved Their Trip, and You Will Too!
@@ -65,7 +70,7 @@ export default function Testimonials() {
                 </div>
                 <div className="ml-4">
                   <h4 className="font-semibold text-gray-900">{testimonial.name}</h4>
-                  <p className="text-sm text-gray-600">{testimonial.country}</p>
+                  <p className="text-sm text-gray-600">{testimonial.location}</p>
                 </div>
               </div>
               
@@ -78,7 +83,7 @@ export default function Testimonials() {
               </div>
               
               <p className="text-gray-600 leading-relaxed text-sm">
-                &quot;{testimonial.text}&quot;
+                &quot;{testimonial.content}&quot;
               </p>
             </div>
           ))}

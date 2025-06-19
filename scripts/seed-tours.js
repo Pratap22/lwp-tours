@@ -8,7 +8,19 @@ const tours = [
     description: 'Experience authentic Bhutanese culture and traditions with local experts. Visit monasteries, fortresses, and rural villages.',
     duration: '7 Days / 6 Nights',
     price: 1899,
-    image: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb',
+    imageUrl: '/tour-cultural.jpg',
+    groupSize: 'Small groups (max 12 people)',
+    difficulty: 'Easy',
+    bestTime: 'March - May, September - November',
+    included: [
+      'All accommodation in comfortable hotels',
+      'All meals (breakfast, lunch, dinner)',
+      'Professional English-speaking guide',
+      'All transportation and transfers',
+      'Bhutan visa and permits',
+      'All entrance fees and activities'
+    ],
+    isHero: true
   },
   {
     title: 'Bhutan Festival Adventure',
@@ -16,7 +28,20 @@ const tours = [
     description: 'Witness vibrant festivals and celebrations in Bhutan. Enjoy mask dances, music, and local cuisine.',
     duration: '10 Days / 9 Nights',
     price: 2499,
-    image: 'https://images.unsplash.com/photo-1464983953574-0892a716854b',
+    imageUrl: '/tour-festival.jpg',
+    groupSize: 'Small groups (max 15 people)',
+    difficulty: 'Easy',
+    bestTime: 'Festival dates vary by season',
+    included: [
+      'All accommodation in comfortable hotels',
+      'All meals (breakfast, lunch, dinner)',
+      'Professional English-speaking guide',
+      'All transportation and transfers',
+      'Bhutan visa and permits',
+      'All entrance fees and activities',
+      'Festival tickets and arrangements'
+    ],
+    isHero: true
   },
   {
     title: 'Druk Path Trek',
@@ -24,7 +49,19 @@ const tours = [
     description: 'Trek the famous Druk Path, connecting Paro and Thimphu through stunning mountain scenery and pristine lakes.',
     duration: '6 Days / 5 Nights',
     price: 2099,
-    image: 'https://images.unsplash.com/photo-1502082553048-f009c37129b9',
+    imageUrl: '/tour-trek.jpg',
+    groupSize: 'Small groups (max 8 people)',
+    difficulty: 'Moderate',
+    bestTime: 'March - May, September - November',
+    included: [
+      'All camping equipment and arrangements',
+      'All meals (breakfast, lunch, dinner)',
+      'Professional trekking guide',
+      'Porter services',
+      'Bhutan visa and permits',
+      'All transportation and transfers'
+    ],
+    isHero: true
   },
   {
     title: 'Luxury Bhutan Escape',
@@ -32,7 +69,19 @@ const tours = [
     description: 'Enjoy Bhutan in luxury with premium hotels, private guides, and exclusive experiences.',
     duration: '5 Days / 4 Nights',
     price: 3999,
-    image: 'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429',
+    imageUrl: '/tour-luxury.jpg',
+    groupSize: 'Private tours',
+    difficulty: 'Easy',
+    bestTime: 'Year-round',
+    included: [
+      'Luxury hotel accommodation',
+      'All gourmet meals',
+      'Private guide and driver',
+      'Premium transportation',
+      'Bhutan visa and permits',
+      'Exclusive cultural experiences'
+    ],
+    isHero: true
   },
   {
     title: 'Rural Bhutan Exploration',
@@ -40,7 +89,19 @@ const tours = [
     description: 'Discover authentic village life, stay with local families, and experience Bhutanese hospitality.',
     duration: '8 Days / 7 Nights',
     price: 1799,
-    image: 'https://images.unsplash.com/photo-1465101046530-73398c7f28ca',
+    imageUrl: '/tour-rural.jpg',
+    groupSize: 'Small groups (max 10 people)',
+    difficulty: 'Moderate',
+    bestTime: 'March - May, September - November',
+    included: [
+      'Mix of homestays and hotels',
+      'All meals (breakfast, lunch, dinner)',
+      'Professional English-speaking guide',
+      'All transportation and transfers',
+      'Bhutan visa and permits',
+      'Local community activities'
+    ],
+    isHero: false
   },
   {
     title: 'Bird Watching Tour',
@@ -48,7 +109,19 @@ const tours = [
     description: 'Explore Bhutan\'s rich biodiversity and spot rare Himalayan birds with expert guides.',
     duration: '9 Days / 8 Nights',
     price: 2299,
-    image: 'https://images.unsplash.com/photo-1519125323398-675f0ddb6308',
+    imageUrl: '/tour-bird.jpg',
+    groupSize: 'Small groups (max 8 people)',
+    difficulty: 'Easy to Moderate',
+    bestTime: 'November - March',
+    included: [
+      'All accommodation in comfortable hotels',
+      'All meals (breakfast, lunch, dinner)',
+      'Professional bird watching guide',
+      'All transportation and transfers',
+      'Bhutan visa and permits',
+      'Bird watching equipment'
+    ],
+    isHero: false
   },
 ];
 
@@ -62,8 +135,13 @@ async function seed() {
     description: { type: String, required: true },
     duration: { type: String, required: true },
     price: { type: Number, required: true },
-    image: { type: String, required: true },
-    createdAt: { type: Date, default: Date.now },
+    imageUrl: { type: String, required: true },
+    groupSize: { type: String, required: true },
+    difficulty: { type: String, required: true },
+    bestTime: { type: String, required: true },
+    included: [{ type: String }],
+    isHero: { type: Boolean, default: false },
+    createdAt: { type: Date, default: Date.now }
   });
   
   const Tour = mongoose.models.Tour || mongoose.model('Tour', TourSchema);

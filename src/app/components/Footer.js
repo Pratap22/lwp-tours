@@ -8,8 +8,8 @@ export default function Footer() {
           <div>
             <h3 className="text-xl font-bold mb-4">LWP Travel & Tours</h3>
             <p className="text-gray-300 mb-2">Local Experts | Authentic Experiences</p>
-            <p className="text-gray-400 text-sm">Thimphu, Bhutan</p>
-            <p className="text-gray-400 text-sm">info@lwpbhutan.com</p>
+            <p className="text-gray-400 text-sm">Bumthang, Bhutan</p>
+            <p className="text-gray-400 text-sm">info@holidaykosh.com</p>
             <p className="text-gray-400 text-sm">+975 17 123 456</p>
           </div>
           <div>

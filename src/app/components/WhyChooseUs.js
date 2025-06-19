@@ -1,9 +1,14 @@
-export default function WhyChooseUs() {
-  const features = [
+export default function WhyChooseUs({ content }) {
+  // Don't render if section is disabled
+  if (!content?.isActive) {
+    return null;
+  }
+
+  const features = content?.reasons?.filter(reason => reason.isActive) || [
     {
       icon: "🎯",
       title: "100% Customizable",
-      description: "We&apos;ll customize the tour to your preferences."
+      description: "We'll customize the tour to your preferences."
     },
     {
       icon: "👥",
@@ -27,10 +32,10 @@ export default function WhyChooseUs() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-gray-900 mb-6">
-            Why is LWP Travel & Tours the best choice for you?
+            {content.title || "Why is LWP Travel & Tours the best choice for you?"}
           </h2>
           <h3 className="text-2xl font-semibold text-gray-700 mb-8">
-            Experience a trip uniquely curated just for you
+            {content.subtitle || "Experience a trip uniquely curated just for you"}
           </h3>
         </div>
 

@@ -18,7 +18,8 @@ export default function ManageTours() {
       const response = await fetch('/api/tours');
       if (!response.ok) throw new Error('Failed to fetch tours');
       const data = await response.json();
-      setTours(data);
+      // Handle the new API response structure where tours are nested
+      setTours(data.tours || []);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -89,12 +90,12 @@ export default function ManageTours() {
 
         {/* Tours Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {tours.map((tour) => (
+          {Array.isArray(tours) && tours.map((tour) => (
             <div key={tour._id} className="bg-white rounded-lg shadow-md overflow-hidden">
               {/* Tour Image */}
               <div className="relative h-48">
                 <Image
-                  src={tour.image}
+                  src={tour.imageUrl}
                   alt={tour.title}
                   fill
                   className="object-cover"
@@ -140,7 +141,7 @@ export default function ManageTours() {
         </div>
 
         {/* Empty State */}
-        {tours.length === 0 && !isLoading && (
+        {(!Array.isArray(tours) || tours.length === 0) && !isLoading && (
           <div className="text-center py-12">
             <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />

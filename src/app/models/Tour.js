@@ -6,8 +6,13 @@ const TourSchema = new mongoose.Schema({
   description: { type: String, required: true },
   duration: { type: String, required: true },
   price: { type: Number, required: true },
-  image: { type: String, required: true },
+  imageUrl: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
+  groupSize: { type: String, required: true },
+  difficulty: { type: String, required: true },
+  bestTime: { type: String, required: true },
+  included: [{ type: String }],
+  isHero: { type: Boolean, default: false },
 });
 
 export default mongoose.models.Tour || mongoose.model('Tour', TourSchema); 

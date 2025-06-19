@@ -128,6 +128,19 @@ const ContentSchema = new mongoose.Schema({
     }]
   },
 
+  // Navigation (for Header)
+  navigation: {
+    isActive: { type: Boolean, default: true },
+    items: [
+      {
+        name: { type: String, required: true },
+        href: { type: String, required: true },
+        isActive: { type: Boolean, default: true },
+        order: { type: Number, default: 0 }
+      }
+    ]
+  },
+
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
 });

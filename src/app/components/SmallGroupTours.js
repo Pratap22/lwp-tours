@@ -1,36 +1,41 @@
+"use client";
 import Image from 'next/image';
 import Link from 'next/link';
 
-async function getTours() {
-  try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/tours`, {
-      cache: 'no-store'
-    });
-    if (!res.ok) throw new Error('Failed to fetch tours');
-    return res.json();
-  } catch (error) {
-    console.error('Error fetching tours:', error);
-    return [];
+export default function SmallGroupTours({ content, tours = [] }) {
+  // Don't render if section is disabled
+  if (!content?.isActive) {
+    return null;
   }
-}
-
-export default async function SmallGroupTours() {
-  const tours = await getTours();
 
   return (
     <section className="bg-white py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-gray-900 mb-6">
-            Small Group Tour
+            {content.title || "Small Group Tour"}
           </h2>
           <h3 className="text-2xl font-semibold text-gray-700 mb-8">
-            Explore Bhutan with passionate travelers
+            {content.subtitle || "Explore Bhutan with passionate travelers"}
           </h3>
           <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
-            Experience Bhutan with our small group tours that blend comfort and adventure. Explore stunning landscapes, connect with local culture, and travel with like-minded travelers. Create lasting memories and make new friends on your Bhutan adventure.
+            {content.description || "Experience Bhutan with our small group tours that blend comfort and adventure. Explore stunning landscapes, connect with local culture, and travel with like-minded travelers. Create lasting memories and make new friends on your Bhutan adventure."}
           </p>
         </div>
+
+        {/* Benefits Section */}
+        {content.benefits && content.benefits.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+            {content.benefits
+              .filter(benefit => benefit.isActive)
+              .sort((a, b) => a.order - b.order)
+              .map((benefit, index) => (
+                <div key={index} className="text-center p-6 bg-gray-50 rounded-lg">
+                  <p className="text-gray-700 font-medium">{benefit.text}</p>
+                </div>
+              ))}
+          </div>
+        )}
 
         {tours.length === 0 ? (
           <div className="text-center py-12">
@@ -47,16 +52,13 @@ export default async function SmallGroupTours() {
               >
                 <div className="relative h-48">
                   <Image
-                    src={tour.image}
+                    src={tour.imageUrl}
                     alt={tour.title}
                     fill
                     className="object-cover"
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                   />
                   <div className="absolute inset-0 bg-black opacity-20"></div>
-                  <div className="absolute top-4 right-4 bg-white px-3 py-1 rounded-full text-sm font-semibold text-gray-900">
-                    ${tour.price}
-                  </div>
                   {index === 0 && (
                     <div className="absolute top-4 left-4 bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
                       Featured
@@ -82,7 +84,7 @@ export default async function SmallGroupTours() {
                         ))}
                       </div>
                       <span className="ml-2 text-sm text-gray-600">
-                        {Math.floor(Math.random() * 50) + 20} Reviews
+                        {tour.reviewCount || 25} Reviews
                       </span>
                     </div>
                   </div>

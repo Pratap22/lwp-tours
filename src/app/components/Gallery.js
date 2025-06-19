@@ -1,28 +1,13 @@
 "use client";
 import Image from 'next/image';
-import { useState, useEffect } from 'react';
 
-export default function Gallery() {
-  const [galleryContent, setGalleryContent] = useState(null);
-  const [loading, setLoading] = useState(true);
+export default function Gallery({ content }) {
+  // Don't render if section is disabled
+  if (!content?.isActive) {
+    return null;
+  }
 
-  useEffect(() => {
-    fetchGalleryContent();
-  }, []);
-
-  const fetchGalleryContent = async () => {
-    try {
-      const response = await fetch('/api/content');
-      const data = await response.json();
-      setGalleryContent(data.gallery);
-    } catch (error) {
-      console.error('Error fetching gallery content:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Fallback content if API fails or content is not available
+  // Fallback content if no content is provided
   const fallbackImages = [
     { src: "/gallery-1.jpg", alt: "Tiger's Nest Monastery" },
     { src: "/gallery-2.jpg", alt: "Bhutanese Festival" },
@@ -32,28 +17,10 @@ export default function Gallery() {
     { src: "/gallery-6.jpg", alt: "Punakha Dzong" }
   ];
 
-  // Use database content if available, otherwise use fallback
-  const images = galleryContent?.images?.filter(img => img.isActive) || fallbackImages;
-  const title = galleryContent?.title || "Bhutan Photo Gallery";
-  const subtitle = galleryContent?.subtitle || "Discover the Beauty of Bhutan";
-
-  // Don't render if section is disabled
-  if (!galleryContent?.isActive && !loading) {
-    return null;
-  }
-
-  if (loading) {
-    return (
-      <section className="bg-white py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-            <p className="mt-4 text-gray-600">Loading gallery...</p>
-          </div>
-        </div>
-      </section>
-    );
-  }
+  // Use provided content if available, otherwise use fallback
+  const images = content?.images?.filter(img => img.isActive) || fallbackImages;
+  const title = content?.title || "Bhutan Photo Gallery";
+  const subtitle = content?.subtitle || "Discover the Beauty of Bhutan";
 
   return (
     <section className="bg-white py-20">
