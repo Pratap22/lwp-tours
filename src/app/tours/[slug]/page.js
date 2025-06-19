@@ -34,9 +34,6 @@ export async function generateMetadata({ params }) {
 export default async function TourDetail({ params: { slug } }) {
   const tour = await getTour(slug);
 
-  console.log('Tour data:', tour);
-  console.log('Image URL:', tour?.image);
-
   if (!tour) {
     return (
       <main className="bg-white min-h-[70vh] mx-auto py-20 px-4">

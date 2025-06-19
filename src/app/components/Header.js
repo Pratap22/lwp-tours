@@ -14,6 +14,7 @@ export default function Header() {
     { name: 'Awards', href: '/awards' },
     { name: 'Why Us', href: '/why-us' },
     { name: 'Contact Us', href: '/contact-us' },
+    { name: 'Admin', href: '/admin' },
   ];
 
   return (
