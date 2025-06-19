@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { headers } from 'next/headers';
 
 async function getTour(slug) {
-  const headersList = headers();
+  const headersList = await headers();
   const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https';
   const host = headersList.get('host');
   
@@ -23,7 +23,8 @@ async function getTour(slug) {
   }
 }
 
-export async function generateMetadata({ params }) {
+export async function generateMetadata(props) {
+  const { params } = await props;
   const tour = await getTour(params.slug);
   return {
     title: tour ? `${tour.title} - LWP Travel & Tours` : 'Tour Not Found',
@@ -31,8 +32,9 @@ export async function generateMetadata({ params }) {
   };
 }
 
-export default async function TourDetail({ params: { slug } }) {
-  const tour = await getTour(slug);
+export default async function TourDetail(props) {
+  const { params } = await props;
+  const tour = await getTour(params.slug);
 
   if (!tour) {
     return (

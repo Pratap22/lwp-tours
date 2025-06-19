@@ -75,6 +75,23 @@ export default function AdminDashboard() {
               </div>
             </div>
           </div>
+
+          {/* Change Password Card */}
+          <Link href="/admin/change-password" className="group">
+            <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+              <div className="flex items-center">
+                <div className="flex-shrink-0">
+                  <svg className="h-8 w-8 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 11c1.104 0 2-.896 2-2s-.896-2-2-2-2 .896-2 2 .896 2 2 2zm0 0v2m0 4h.01M17 16v-1a5 5 0 00-10 0v1a2 2 0 002 2h6a2 2 0 002-2z" />
+                  </svg>
+                </div>
+                <div className="ml-4">
+                  <h3 className="text-lg font-medium text-gray-900 group-hover:text-yellow-600">Change Admin Password</h3>
+                  <p className="text-gray-600">Update your admin password securely</p>
+                </div>
+              </div>
+            </div>
+          </Link>
         </div>
 
         {/* Quick Stats */}

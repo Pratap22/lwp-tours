@@ -1,3 +1,7 @@
+import jwt from 'jsonwebtoken';
+
+const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
+
 /**
  * Generate a URL-friendly slug from a string
  * @param {string} text - The text to convert to a slug
@@ -37,4 +41,25 @@ export function isValidSlug(slug) {
 export function formatPrice(price, currency = '$') {
   if (!price) return `${currency}0`;
   return `${currency}${Number(price).toLocaleString()}`;
+}
+
+export function formatDate(date) {
+  return new Date(date).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+}
+
+export function verifyToken(token) {
+  try {
+    return jwt.verify(token, JWT_SECRET);
+  } catch (error) {
+    console.error(error)
+    return null;
+  }
+}
+
+export function generateToken(payload) {
+  return jwt.sign(payload, JWT_SECRET, { expiresIn: '24h' });
 } 

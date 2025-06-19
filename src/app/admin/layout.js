@@ -10,29 +10,67 @@ export default function AdminLayout({ children }) {
   const router = useRouter();
 
   useEffect(() => {
-    // Check if admin is authenticated (stored in localStorage)
-    const adminAuth = localStorage.getItem('adminAuth');
-    if (adminAuth === 'true') {
-      setIsAuthenticated(true);
+    // Check if admin is authenticated via JWT token
+    const token = localStorage.getItem('adminToken');
+    if (token) {
+      // Verify token with API
+      fetch('/api/admin/verify', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          setIsAuthenticated(true);
+        } else {
+          // Token is invalid, clear storage
+          localStorage.removeItem('adminAuth');
+          localStorage.removeItem('adminToken');
+        }
+      })
+      .catch(() => {
+        // Network error, clear storage
+        localStorage.removeItem('adminAuth');
+        localStorage.removeItem('adminToken');
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+    } else {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   }, []);
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
+    const email = e.target.email.value;
     const password = e.target.password.value;
     
-    // Simple password check (in production, use proper authentication)
-    if (password === 'admin123') {
-      localStorage.setItem('adminAuth', 'true');
-      setIsAuthenticated(true);
-    } else {
-      alert('Invalid password');
+    try {
+      const res = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        localStorage.setItem('adminAuth', 'true');
+        localStorage.setItem('adminToken', data.token);
+        setIsAuthenticated(true);
+      } else {
+        alert(data.error || 'Invalid email or password');
+      }
+    } catch (err) {
+      alert('Login failed. Please try again.');
     }
   };
 
   const handleLogout = () => {
     localStorage.removeItem('adminAuth');
+    localStorage.removeItem('adminToken');
     setIsAuthenticated(false);
     router.push('/admin');
   };
@@ -51,10 +89,24 @@ export default function AdminLayout({ children }) {
         <div className="max-w-md w-full bg-white rounded-lg shadow-md p-8">
           <div className="text-center mb-8">
             <h1 className="text-2xl font-bold text-gray-900">Admin Login</h1>
-            <p className="text-gray-600">Enter password to access admin panel</p>
+            <p className="text-gray-600">Enter your credentials to access admin panel</p>
           </div>
           
           <form onSubmit={handleLogin} className="space-y-6">
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                Email
+              </label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                required
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
+                placeholder="Enter admin email"
+                autoComplete="username"
+              />
+            </div>
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
                 Password
@@ -67,6 +119,7 @@ export default function AdminLayout({ children }) {
                   required
                   className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
                   placeholder="Enter admin password"
+                  autoComplete="current-password"
                 />
                 <button
                   type="button"
@@ -94,12 +147,6 @@ export default function AdminLayout({ children }) {
               Login
             </button>
           </form>
-          
-          <div className="mt-6 text-center">
-            <p className="text-sm text-gray-500">
-              Demo password: <code className="bg-gray-100 px-2 py-1 rounded">admin123</code>
-            </p>
-          </div>
         </div>
       </div>
     );
