@@ -16,7 +16,7 @@ export default function AboutUs() {
       position: "Head, Operation",
       email: "dawayoezer22@gamil.com",
       github: "https://github.com/yoez2",
-      image: "https://randomuser.me/api/portraits/men/32.jpg",
+      image: "https://avatars.githubusercontent.com/u/147582853",
       bio: "Dawa oversees all operations, ensuring seamless travel experiences for every guest. Her attention to detail and dedication are unmatched.",
     },
     {
@@ -136,7 +136,7 @@ export default function AboutUs() {
       position: "Team Member",
       email: "yeshi1104@gmail.com",
       github: "https://github.com/yeshi7",
-      image: "https://randomuser.me/api/portraits/women/47.jpg",
+      image: "https://avatars.githubusercontent.com/u/205859634",
       bio: "Yeshi is dedicated to providing the best possible experience for every traveler.",
     },
     {
@@ -160,7 +160,7 @@ export default function AboutUs() {
       position: "Team Member",
       email: "uchoden757@gmail.com",
       github: "https://github.com/U-55",
-      image: "https://randomuser.me/api/portraits/women/50.jpg",
+      image: "https://avatars.githubusercontent.com/u/205810978",
       bio: "Uygen's friendly approach and local knowledge delight all our guests.",
     },
     {
@@ -214,6 +214,8 @@ export default function AboutUs() {
                 <Image
                   src={member.image}
                   alt={member.name}
+                  width={144}
+                  height={144}
                   className="w-32 h-32 md:w-36 md:h-36 rounded-full object-cover mb-4 md:mb-0 md:mx-8 border-4 border-white shadow flex-shrink-0"
                 />
                 <div className="flex-1 text-center md:text-left flex flex-col justify-center">
