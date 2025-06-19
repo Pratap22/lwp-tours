@@ -12,44 +12,6 @@ export async function GET() {
     // If no content exists, create default content
     if (!content) {
       content = await Content.create({
-        heroCarousel: {
-          slides: [
-            {
-              title: "True Cultural Immersion",
-              subtitle: "Experience Bhutan's deeply spiritual culture and rich traditions.",
-              image: "/hero-cultural.jpg",
-              cta: "View Trips",
-              isActive: true,
-              order: 0
-            },
-            {
-              title: "Bhutan's Festival Experience",
-              subtitle: "Explore Bhutan's spiritual depth at its lively festivals",
-              image: "/hero-festival.jpg",
-              cta: "View Trips",
-              isActive: true,
-              order: 1
-            },
-            {
-              title: "Trekking And Adventures",
-              subtitle: "Explore Challenging Trails And Connect With Bhutan's Natural Beauty.",
-              image: "/hero-trekking.jpg",
-              cta: "View Trips",
-              isActive: true,
-              order: 2
-            },
-            {
-              title: "Bhutan in Luxury",
-              subtitle: "Experience Bhutan in ultimate luxury and comfort",
-              image: "/hero-luxury.jpg",
-              cta: "View Trips",
-              isActive: true,
-              order: 3
-            }
-          ],
-          isActive: true,
-          autoplaySpeed: 4000
-        },
         gallery: {
           images: [
             { src: "/gallery-1.jpg", alt: "Tiger's Nest Monastery", isActive: true, order: 0 },

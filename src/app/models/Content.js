@@ -1,20 +1,6 @@
 import mongoose from 'mongoose';
 
 const ContentSchema = new mongoose.Schema({
-  // Hero Carousel
-  heroCarousel: {
-    slides: [{
-      title: { type: String, required: true },
-      subtitle: { type: String, required: true },
-      image: { type: String, required: true },
-      cta: { type: String, default: 'View Trips' },
-      isActive: { type: Boolean, default: true },
-      order: { type: Number, default: 0 }
-    }],
-    isActive: { type: Boolean, default: true },
-    autoplaySpeed: { type: Number, default: 4000 }
-  },
-
   // Gallery
   gallery: {
     images: [{

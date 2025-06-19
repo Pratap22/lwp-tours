@@ -7,7 +7,7 @@ export default function ContentManagement() {
   const [content, setContent] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [activeTab, setActiveTab] = useState('hero');
+  const [activeTab, setActiveTab] = useState('gallery');
   const [message, setMessage] = useState('');
 
   useEffect(() => {
@@ -66,7 +66,6 @@ export default function ContentManagement() {
   };
 
   const tabs = [
-    { id: 'hero', name: 'Hero Carousel', icon: '🖼️' },
     { id: 'gallery', name: 'Gallery', icon: '📷' },
     { id: 'awards', name: 'Awards', icon: '🏆' },
     { id: 'aboutBhutan', name: 'About Bhutan', icon: '📖' },
@@ -178,14 +177,6 @@ export default function ContentManagement() {
           <div className="lg:col-span-9 mt-8 lg:mt-0">
             <div className="bg-white rounded-lg shadow-sm border">
               <div className="p-8">
-                {activeTab === 'hero' && (
-                  <HeroCarouselSection 
-                    content={content.heroCarousel} 
-                    onSave={(data) => saveContent('heroCarousel', data)}
-                    saving={saving}
-                  />
-                )}
-
                 {activeTab === 'gallery' && (
                   <GallerySection 
                     content={content.gallery} 
@@ -269,185 +260,6 @@ export default function ContentManagement() {
             </div>
           </div>
         </div>
-      </div>
-    </div>
-  );
-}
-
-// Hero Carousel Section Component
-function HeroCarouselSection({ content, onSave, saving }) {
-  const [slides, setSlides] = useState(content.slides || []);
-  const [isActive, setIsActive] = useState(content.isActive);
-  const [autoplaySpeed, setAutoplaySpeed] = useState(content.autoplaySpeed || 4000);
-
-  const addSlide = () => {
-    setSlides([...slides, {
-      title: '',
-      subtitle: '',
-      image: '',
-      cta: 'View Trips',
-      isActive: true,
-      order: slides.length
-    }]);
-  };
-
-  const updateSlide = (index, field, value) => {
-    const newSlides = [...slides];
-    newSlides[index] = { ...newSlides[index], [field]: value };
-    setSlides(newSlides);
-  };
-
-  const removeSlide = (index) => {
-    setSlides(slides.filter((_, i) => i !== index));
-  };
-
-  const toggleSlide = (index) => {
-    const newSlides = [...slides];
-    newSlides[index].isActive = !newSlides[index].isActive;
-    setSlides(newSlides);
-  };
-
-  const handleSave = () => {
-    onSave({
-      slides: slides.map((slide, index) => ({ ...slide, order: index })),
-      isActive,
-      autoplaySpeed
-    });
-  };
-
-  return (
-    <div>
-      {/* Header */}
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900">Hero Carousel</h2>
-          <p className="text-gray-600 mt-1">Manage the main hero banner slides</p>
-        </div>
-        <div className="flex items-center space-x-4">
-          <label className="flex items-center">
-            <input
-              type="checkbox"
-              checked={isActive}
-              onChange={(e) => setIsActive(e.target.checked)}
-              className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-            />
-            <span className="ml-2 text-sm text-gray-700">Show Section</span>
-          </label>
-          <button
-            onClick={handleSave}
-            disabled={saving}
-            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
-          >
-            {saving ? 'Saving...' : 'Save Changes'}
-          </button>
-        </div>
-      </div>
-
-      {/* Settings */}
-      <div className="bg-gray-50 rounded-lg p-6 mb-8">
-        <h3 className="text-lg font-medium text-gray-900 mb-4">Carousel Settings</h3>
-        <div className="max-w-xs">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Autoplay Speed (milliseconds)
-          </label>
-          <input
-            type="number"
-            value={autoplaySpeed}
-            onChange={(e) => setAutoplaySpeed(Number(e.target.value))}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white"
-            placeholder="4000"
-          />
-        </div>
-      </div>
-
-      {/* Slides */}
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <h3 className="text-lg font-medium text-gray-900">Carousel Slides</h3>
-          <button
-            onClick={addSlide}
-            className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-          >
-            + Add Slide
-          </button>
-        </div>
-
-        {slides.map((slide, index) => (
-          <div key={index} className="bg-gray-50 rounded-lg p-6 border border-gray-200">
-            <div className="flex items-center justify-between mb-6">
-              <h4 className="text-lg font-medium text-gray-900">Slide {index + 1}</h4>
-              <div className="flex items-center space-x-3">
-                <label className="flex items-center">
-                  <input
-                    type="checkbox"
-                    checked={slide.isActive}
-                    onChange={() => toggleSlide(index)}
-                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                  />
-                  <span className="ml-2 text-sm text-gray-600">Active</span>
-                </label>
-                <button
-                  onClick={() => removeSlide(index)}
-                  className="text-red-600 hover:text-red-800 text-sm font-medium"
-                >
-                  Remove
-                </button>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Title
-                  </label>
-                  <input
-                    type="text"
-                    value={slide.title}
-                    onChange={(e) => updateSlide(index, 'title', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white"
-                    placeholder="Enter slide title"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Subtitle
-                  </label>
-                  <input
-                    type="text"
-                    value={slide.subtitle}
-                    onChange={(e) => updateSlide(index, 'subtitle', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white"
-                    placeholder="Enter slide subtitle"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    CTA Button Text
-                  </label>
-                  <input
-                    type="text"
-                    value={slide.cta}
-                    onChange={(e) => updateSlide(index, 'cta', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white"
-                    placeholder="View Trips"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Hero Image
-                </label>
-                <ImageUpload
-                  currentImage={slide.image}
-                  onImageUpload={(imageUrl) => updateSlide(index, 'image', imageUrl)}
-                  folder="hero-carousel"
-                />
-              </div>
-            </div>
-          </div>
-        ))}
       </div>
     </div>
   );
