@@ -23,8 +23,7 @@ async function getTour(slug) {
   }
 }
 
-export async function generateMetadata(props) {
-  const { params } = await props;
+export async function generateMetadata({ params }) {
   const tour = await getTour(params.slug);
   return {
     title: tour ? `${tour.title} - LWP Travel & Tours` : 'Tour Not Found',
@@ -32,8 +31,7 @@ export async function generateMetadata(props) {
   };
 }
 
-export default async function TourDetail(props) {
-  const { params } = await props;
+export default async function TourDetail({ params }) {
   const tour = await getTour(params.slug);
 
   if (!tour) {
