@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function AboutUs() {
   const team = [
     {
@@ -204,14 +206,14 @@ export default function AboutUs() {
                   <p className="text-blue-700 text-base mb-2 font-semibold">{member.position}</p>
                   <p className="text-gray-600 mb-2 text-sm">{member.bio}</p>
                   {member.email && <p className="text-gray-500 text-xs mb-1 break-all">{member.email}</p>}
-                  <a
+                  <Link
                     href={member.github}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-gray-500 hover:text-blue-600 text-xs underline"
                   >
                     GitHub
-                  </a>
+                  </Link>
                 </div>
               </div>
             );
