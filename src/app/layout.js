@@ -13,10 +13,9 @@ export const metadata = {
 
 async function getContent() {
   try {
-    // Get the base URL for API calls
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL 
-      ? `${process.env.NEXT_PUBLIC_API_URL}` 
-      : 'http://localhost:3000';
+    const baseUrl =
+      process.env.NEXT_PUBLIC_API_URL ||
+      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
 
     const res = await fetch(`${baseUrl}/api/content`, {
       next: { 

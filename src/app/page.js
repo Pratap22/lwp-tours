@@ -19,12 +19,10 @@ const fetchOptions = {
 
 async function getPageData() {
   try {
-    // Get the base URL for API calls
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL 
-      ? `${process.env.NEXT_PUBLIC_API_URL}` 
-      : 'http://localhost:3000';
+    const baseUrl =
+      process.env.NEXT_PUBLIC_API_URL ||
+      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
 
-    // Fetch both tours and content in parallel with absolute URLs
     const [toursRes, contentRes] = await Promise.all([
       fetch(`${baseUrl}/api/tours`, fetchOptions),
       fetch(`${baseUrl}/api/content`, fetchOptions)
