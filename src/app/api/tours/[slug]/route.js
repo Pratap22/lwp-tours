@@ -4,16 +4,13 @@ import Tour from '../../../models/Tour';
 
 export async function GET(request, { params }) {
   const { slug } = await params;
-  console.log('Requested slug:', slug); // Debug log
 
   try {
     await dbConnect();
     
     const tour = await Tour.findOne({ slug });
-    console.log('Found tour:', tour ? 'yes' : 'no'); // Debug log
     
     if (!tour) {
-      console.log('Tour not found for slug:', slug); // Debug log
       return NextResponse.json(
         { error: 'Tour not found' },
         { status: 404 }

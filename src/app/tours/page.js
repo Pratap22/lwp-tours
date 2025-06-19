@@ -15,11 +15,15 @@ export default function Tours() {
   useEffect(() => {
     async function fetchTours() {
       try {
-        const res = await fetch('/api/tours');
+        const res = await fetch('/api/tours', {
+          next: { 
+            revalidate: 3600 // Cache for 1 hour
+          }
+        });
         if (!res.ok) throw new Error('Failed to fetch tours');
         const data = await res.json();
-        setTours(data);
-        setFilteredTours(data);
+        setTours(data.tours || []);
+        setFilteredTours(data.tours || []);
       } catch (error) {
         console.error('Error fetching tours:', error);
       } finally {
@@ -159,7 +163,7 @@ export default function Tours() {
               <div key={tour._id} className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100 hover:shadow-xl transition-shadow duration-300">
                 <div className="relative h-48">
                   <Image
-                    src={tour.image}
+                    src={tour.imageUrl}
                     alt={tour.title}
                     fill
                     className="object-cover"

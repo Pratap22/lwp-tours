@@ -46,7 +46,7 @@ export default function HeroSection({ heroTours = [] }) {
   }
 
   return (
-    <section className="relative h-[600px] md:h-[500px]">
+    <section className="relative h-[90vh]">
       {/* Main Carousel */}
       <div className="relative h-full overflow-hidden">
         {heroTours.map((tour, index) => (
@@ -64,19 +64,19 @@ export default function HeroSection({ heroTours = [] }) {
                 className="object-cover"
                 priority={index === 0}
               />
-              <div className="absolute inset-0 bg-black/40" />
+              <div className="absolute inset-0 bg-black/30" />
               <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white p-4">
-                <h2 className="text-4xl md:text-5xl font-bold mb-4 max-w-3xl">
+                <h1 className="text-5xl md:text-7xl font-bold mb-6 max-w-4xl">
                   {tour.title}
-                </h2>
-                <p className="text-lg md:text-xl mb-8 max-w-2xl">
+                </h1>
+                <p className="text-xl md:text-2xl mb-10 max-w-2xl">
                   {tour.description}
                 </p>
                 <Link
                   href={`/tours/${tour.slug}`}
-                  className="bg-blue-600 text-white px-8 py-3 rounded-full text-lg font-semibold hover:bg-blue-700 transition-colors duration-200"
+                  className="bg-white/20 hover:bg-white/30 text-white px-10 py-4 rounded-full text-lg font-medium transition-colors duration-200"
                 >
-                  View Tour
+                  View Trips
                 </Link>
               </div>
             </div>
@@ -87,26 +87,26 @@ export default function HeroSection({ heroTours = [] }) {
       {/* Navigation Arrows */}
       <button
         onClick={prevSlide}
-        className="absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-white/20 hover:bg-white/40 text-white rounded-full p-2 transition-colors duration-200"
+        className="absolute left-8 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full transition-opacity duration-200 opacity-60 hover:opacity-100"
         aria-label="Previous slide"
       >
-        <ChevronLeftIcon className="h-6 w-6" />
+        <ChevronLeftIcon className="h-8 w-8 text-white" />
       </button>
       <button
         onClick={nextSlide}
-        className="absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-white/20 hover:bg-white/40 text-white rounded-full p-2 transition-colors duration-200"
+        className="absolute right-8 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full transition-opacity duration-200 opacity-60 hover:opacity-100"
         aria-label="Next slide"
       >
-        <ChevronRightIcon className="h-6 w-6" />
+        <ChevronRightIcon className="h-8 w-8 text-white" />
       </button>
 
       {/* Dots Navigation */}
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex space-x-2">
+      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 flex space-x-3">
         {heroTours.map((_, index) => (
           <button
             key={index}
             onClick={() => setCurrent(index)}
-            className={`w-3 h-3 rounded-full transition-colors duration-200 ${
+            className={`w-2.5 h-2.5 rounded-full transition-colors duration-200 ${
               index === current ? 'bg-white' : 'bg-white/50'
             }`}
             aria-label={`Go to slide ${index + 1}`}

@@ -12,7 +12,7 @@ import Gallery from "./components/Gallery";
 // Fetch options with caching
 const fetchOptions = {
   next: { 
-    cache: 'no-store', // Cache for 1 hour
+    revalidate: 3600, // Cache for 1 hour
     tags: ['content'] // Add cache tag for manual revalidation
   }
 };
@@ -41,21 +41,19 @@ async function getPageData() {
 
     return {
       heroTours: toursData.tours.filter(tour => tour.isHero),
-      content: contentData,
-      tours: toursData.tours
+      content: contentData
     };
   } catch (error) {
     console.error('Error fetching page data:', error);
     return {
       heroTours: [],
-      content: null,
-      tours: []
+      content: null
     };
   }
 }
 
 export default async function Home() {
-  const { heroTours, content, tours } = await getPageData();
+  const { heroTours, content } = await getPageData();
 
   if (!content) {
     return (
@@ -81,7 +79,7 @@ export default async function Home() {
         <TravelThemes content={content.travelThemes} />
       )}
       {content.smallGroupTours?.isActive && (
-        <SmallGroupTours content={content.smallGroupTours} tours={tours} />
+        <SmallGroupTours content={content.smallGroupTours} />
       )}
       {content.whyChooseUs?.isActive && (
         <WhyChooseUs content={content.whyChooseUs} />

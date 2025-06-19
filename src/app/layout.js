@@ -13,9 +13,17 @@ export const metadata = {
 
 async function getContent() {
   try {
-    const res = await fetch('/api/content', {
-      cache: 'no-store'
+    // Get the base URL for API calls
+    const baseUrl = process.env.VERCEL_URL 
+      ? `https://${process.env.VERCEL_URL}` 
+      : 'http://localhost:3000';
+
+    const res = await fetch(`${baseUrl}/api/content`, {
+      next: { 
+        revalidate: 3600 // Revalidate every hour
+      }
     });
+    
     if (!res.ok) {
       throw new Error('Failed to fetch content');
     }
