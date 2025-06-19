@@ -39,7 +39,7 @@ export default async function TourDetail({ params: { slug } }) {
       <main className="bg-white min-h-[70vh] mx-auto py-20 px-4">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-4xl font-bold mb-4 text-blue-900">Tour Not Found</h1>
-          <p className="text-gray-600 mb-8">The tour you're looking for doesn't exist.</p>
+          <p className="text-gray-600 mb-8">The tour you&apos;re looking for doesn&apos;t exist.</p>
           <Link 
             href="/tours" 
             className="bg-blue-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-blue-700 transition-colors"
@@ -106,7 +106,7 @@ export default async function TourDetail({ params: { slug } }) {
                 </div>
               </div>
 
-              <h3 className="text-xl font-bold text-gray-900 mb-4">What's Included</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-4">What&apos;s Included</h3>
               <ul className="space-y-3 mb-8">
                 <li className="flex items-start">
                   <svg className="w-5 h-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">

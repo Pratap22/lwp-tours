@@ -44,6 +44,23 @@ export default function AdminDashboard() {
             </div>
           </Link>
 
+          {/* Content Management Card */}
+          <Link href="/admin/content" className="group">
+            <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+              <div className="flex items-center">
+                <div className="flex-shrink-0">
+                  <svg className="h-8 w-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                  </svg>
+                </div>
+                <div className="ml-4">
+                  <h3 className="text-lg font-medium text-gray-900 group-hover:text-purple-600">Content Management</h3>
+                  <p className="text-gray-600">Manage home page content and sections</p>
+                </div>
+              </div>
+            </div>
+          </Link>
+
           {/* Analytics Card */}
           <div className="bg-white rounded-lg shadow-md p-6">
             <div className="flex items-center">

@@ -100,12 +100,12 @@ export default async function SmallGroupTours() {
         )}
 
         <div className="text-center mt-12">
-          <a 
-            href="/tours" 
+          <Link
+            href="/tours"
             className="bg-green-600 text-white px-8 py-3 rounded-full text-lg font-semibold hover:bg-green-700 transition-colors duration-200 inline-block"
           >
             View All Tours
-          </a>
+          </Link>
         </div>
       </div>
     </section>

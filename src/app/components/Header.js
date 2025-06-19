@@ -1,20 +1,19 @@
-'use client';
-import { useState } from 'react';
-import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
-import Link from 'next/link';
+"use client";
+import { useState } from "react";
+import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
+import Link from "next/link";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const navigation = [
-    { name: 'Home', href: '/' },
-    { name: 'About Us', href: '/about-us' },
-    { name: 'Tours', href: '/tours' },
-    { name: 'Travel Info', href: '/travel-info' },
-    { name: 'Awards', href: '/awards' },
-    { name: 'Why Us', href: '/why-us' },
-    { name: 'Contact Us', href: '/contact-us' },
-    { name: 'Admin', href: '/admin' },
+    { name: "About Us", href: "/about-us" },
+    { name: "Tours", href: "/tours" },
+    { name: "Travel Info", href: "/travel-info" },
+    { name: "Awards", href: "/awards" },
+    { name: "Why Us", href: "/why-us" },
+    { name: "Contact Us", href: "/contact-us" },
+    { name: "Admin", href: "/admin" },
   ];
 
   return (
@@ -22,17 +21,21 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <div className="flex-shrink-0">
-            <div className="flex items-center">
-              <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-lg">LWP</span>
-              </div>
-              <div className="ml-3">
-                <h1 className="text-xl font-bold text-gray-900">LWP Travel & Tours</h1>
-                <p className="text-xs text-gray-600">Local Experts</p>
+          <Link href={"/"}>
+            <div className="flex-shrink-0">
+              <div className="flex items-center">
+                <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                  <span className="text-white font-bold text-lg">LWP</span>
+                </div>
+                <div className="ml-3">
+                  <h1 className="text-xl font-bold text-gray-900">
+                    LWP Travel & Tours
+                  </h1>
+                  <p className="text-xs text-gray-600">Local Experts</p>
+                </div>
               </div>
             </div>
-          </div>
+          </Link>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex space-x-8">
@@ -49,7 +52,10 @@ export default function Header() {
 
           {/* CTA Button */}
           <div className="hidden md:flex items-center">
-            <Link href="/contact-us" className="bg-blue-600 text-white px-6 py-2 rounded-full text-sm font-medium hover:bg-blue-700 transition-colors duration-200">
+            <Link
+              href="/contact-us"
+              className="bg-blue-600 text-white px-6 py-2 rounded-full text-sm font-medium hover:bg-blue-700 transition-colors duration-200"
+            >
               Get Started
             </Link>
           </div>
@@ -83,7 +89,10 @@ export default function Header() {
                 </Link>
               ))}
               <div className="pt-4">
-                <Link href="/contact-us" className="w-full block text-center bg-blue-600 text-white px-6 py-2 rounded-full text-sm font-medium hover:bg-blue-700 transition-colors duration-200">
+                <Link
+                  href="/contact-us"
+                  className="w-full block text-center bg-blue-600 text-white px-6 py-2 rounded-full text-sm font-medium hover:bg-blue-700 transition-colors duration-200"
+                >
                   Get Started
                 </Link>
               </div>
@@ -93,4 +102,4 @@ export default function Header() {
       </div>
     </header>
   );
-} 
+}

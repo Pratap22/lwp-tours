@@ -23,40 +23,35 @@ export default function EditTour({ params }) {
   const [error, setError] = useState('');
 
   useEffect(() => {
+    const fetchTour = async () => {
+      try {
+        const response = await fetch(`/api/tours/${slug}`);
+        if (!response.ok) throw new Error('Tour not found');
+        const tour = await response.json();
+        // Extract nights from duration format (e.g., "8 Days / 7 Nights" -> "7")
+        let durationInput = tour.duration;
+        if (tour.duration && tour.duration.includes('Nights')) {
+          const nightsMatch = tour.duration.match(/(\d+)\s+Nights/);
+          if (nightsMatch) {
+            durationInput = nightsMatch[1];
+          }
+        }
+        setFormData({
+          title: tour.title,
+          slug: tour.slug,
+          description: tour.description,
+          duration: durationInput,
+          price: tour.price.toString(),
+          image: tour.image,
+        });
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
     fetchTour();
   }, [slug]);
-
-  const fetchTour = async () => {
-    try {
-      const response = await fetch(`/api/tours/${slug}`);
-      if (!response.ok) throw new Error('Tour not found');
-      const tour = await response.json();
-      console.log('Tour data:', tour);
-      
-      // Extract nights from duration format (e.g., "8 Days / 7 Nights" -> "7")
-      let durationInput = tour.duration;
-      if (tour.duration && tour.duration.includes('Nights')) {
-        const nightsMatch = tour.duration.match(/(\d+)\s+Nights/);
-        if (nightsMatch) {
-          durationInput = nightsMatch[1]; // Extract just the number of nights
-        }
-      }
-      
-      setFormData({
-        title: tour.title,
-        slug: tour.slug,
-        description: tour.description,
-        duration: durationInput,
-        price: tour.price.toString(),
-        image: tour.image,
-      });
-    } catch (err) {
-      console.error(err)
-      setError(err.message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -141,7 +136,7 @@ export default function EditTour({ params }) {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-900 mb-4">Tour Not Found</h1>
-          <p className="text-gray-600 mb-6">The tour you're trying to edit doesn't exist.</p>
+          <p className="text-gray-600 mb-6">The tour you&apos;re trying to edit doesn&apos;t exist.</p>
           <Link
             href="/admin/tours"
             className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"

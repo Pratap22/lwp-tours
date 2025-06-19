@@ -171,21 +171,23 @@ export default function ImageUpload({ onImageUpload, currentImage = '' }) {
       />
 
       {/* URL Input (for manual entry) */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Or enter image URL manually
-        </label>
-        <input
-          type="url"
-          value={previewUrl}
-          onChange={(e) => {
-            setPreviewUrl(e.target.value);
-            onImageUpload(e.target.value);
-          }}
-          placeholder="https://images.unsplash.com/photo-..."
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-        />
-      </div>
+      {(!previewUrl || !previewUrl.includes('res.cloudinary')) && (
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Or enter image URL manually
+          </label>
+          <input
+            type="url"
+            value={previewUrl}
+            onChange={(e) => {
+              setPreviewUrl(e.target.value);
+              onImageUpload(e.target.value);
+            }}
+            placeholder="https://images.unsplash.com/photo-..."
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
+          />
+        </div>
+      )}
     </div>
   );
 } 
