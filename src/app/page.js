@@ -17,8 +17,6 @@ async function getPageData() {
       getContent()
     ]);
 
-    console.log(toursData);
-
     return {
       heroTours: toursData.filter(tour => tour.isHero).slice(0, 6),
       content: contentData,
