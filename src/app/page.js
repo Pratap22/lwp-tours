@@ -8,41 +8,28 @@ import WhyChooseUs from "./components/WhyChooseUs";
 import BookingProcess from "./components/BookingProcess";
 import Testimonials from "./components/Testimonials";
 import Gallery from "./components/Gallery";
-
-// Fetch options without caching
-const fetchOptions = {
-  cache: 'no-store'
-};
+import { getTours, getContent } from "./lib/data";
 
 async function getPageData() {
   try {
-    const baseUrl =
-      process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
-
-    const [toursRes, contentRes] = await Promise.all([
-      fetch(`${baseUrl}/api/tours`, fetchOptions),
-      fetch(`${baseUrl}/api/content`, fetchOptions)
-    ]);
-
-    if (!toursRes.ok || !contentRes.ok) {
-      throw new Error('Failed to fetch data');
-    }
-
     const [toursData, contentData] = await Promise.all([
-      toursRes.json(),
-      contentRes.json()
+      getTours(),
+      getContent()
     ]);
+
+    console.log(toursData);
 
     return {
-      heroTours: toursData.tours.filter(tour => tour.isHero).slice(0, 6),
+      heroTours: toursData.filter(tour => tour.isHero).slice(0, 6),
       content: contentData,
-      tours: toursData.tours
+      tours: toursData
     };
   } catch (error) {
     console.error('Error fetching page data:', error);
     return {
       heroTours: [],
-      content: null
+      content: null,
+      tours: []
     };
   }
 }
