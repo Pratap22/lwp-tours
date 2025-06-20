@@ -17,6 +17,7 @@ const defaultNavigation = [
 export default function Header({ content }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [navigation, setNavigation] = useState(defaultNavigation);
   const pathname = usePathname();
   
   // Only apply scroll behavior on home page
@@ -36,12 +37,20 @@ export default function Header({ content }) {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [isHomePage]);
 
-  // Use content navigation if available, otherwise use default
-  const navigation = content?.navigation?.isActive && content.navigation.items
-    ? content.navigation.items
+  useEffect(() => {
+    // Find navigation section in the new sections array structure
+    const navigationSection = content?.sections?.find(section => section.sectionId === 'navigation');
+    
+    // Use content navigation if available, otherwise use default
+    if (navigationSection?.isActive && navigationSection.navigationItems) {
+      const navItems = navigationSection.navigationItems
         .filter(item => item.isActive)
-        .sort((a, b) => a.order - b.order)
-    : defaultNavigation;
+        .sort((a, b) => a.order - b.order);
+      setNavigation(navItems);
+    } else {
+      setNavigation(defaultNavigation);
+    }
+  }, [content]);
 
   return (
     <header className={`fixed w-full top-0 z-50 transition-all duration-300 ${

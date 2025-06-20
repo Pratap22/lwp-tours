@@ -47,6 +47,20 @@ async function getPageData() {
   }
 }
 
+// Component mapping for dynamic rendering
+const sectionComponents = {
+  gallery: Gallery,
+  awards: AwardsSection,
+  aboutBhutan: AboutBhutanSection,
+  customJourney: CustomJourneySection,
+  travelThemes: TravelThemes,
+  whyChooseUs: WhyChooseUs,
+  testimonials: Testimonials,
+  bookingProcess: BookingProcess,
+  smallGroupTours: SmallGroupTours,
+  navigation: null // Navigation is handled separately in Header
+};
+
 export default async function Home() {
   const { heroTours, content, tours } = await getPageData();
 
@@ -58,36 +72,29 @@ export default async function Home() {
     );
   }
 
+  // Get sorted sections (excluding navigation which is handled in Header)
+  const sortedSections = content.sections
+    ?.filter(section => section.sectionId !== 'navigation' && section.isActive !== false)
+    ?.sort((a, b) => a.order - b.order) || [];
+
   return (
     <main>
+      {/* HeroSection is always first */}
       <HeroSection heroTours={heroTours} />
-      {content.awards?.isActive && (
-        <AwardsSection content={content.awards} />
-      )}
-      {content.aboutBhutan?.isActive && (
-        <AboutBhutanSection content={content.aboutBhutan} />
-      )}
-      {content.customJourney?.isActive && (
-        <CustomJourneySection content={content.customJourney} />
-      )}
-      {content.travelThemes?.isActive && (
-        <TravelThemes content={content.travelThemes} />
-      )}
-      {content.smallGroupTours?.isActive && (
-        <SmallGroupTours content={content.smallGroupTours} tours={tours} />
-      )}
-      {content.whyChooseUs?.isActive && (
-        <WhyChooseUs content={content.whyChooseUs} />
-      )}
-      {content.bookingProcess?.isActive && (
-        <BookingProcess content={content.bookingProcess} />
-      )}
-      {content.testimonials?.isActive && (
-        <Testimonials content={content.testimonials} />
-      )}
-      {content.gallery?.isActive && (
-        <Gallery content={content.gallery} />
-      )}
+      
+      {/* Render sections in order */}
+      {sortedSections.map((section) => {
+        const Component = sectionComponents[section.sectionId];
+        if (!Component) return null;
+
+        // Pass additional props for specific sections
+        const props = {
+          content: section,
+          ...(section.sectionId === 'smallGroupTours' && { tours })
+        };
+
+        return <Component key={section.sectionId} {...props} />;
+      })}
     </main>
   );
 }

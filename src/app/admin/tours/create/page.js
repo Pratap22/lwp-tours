@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import ImageUpload from '../../../components/ImageUpload';
@@ -20,74 +20,97 @@ export default function CreateTour() {
     bestTime: '',
     isHero: false,
     featured: false,
+    travelTheme: '',
+    included: [''],
   });
-  const [isLoading, setIsLoading] = useState(false);
+  const [travelThemes, setTravelThemes] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+  useEffect(() => {
+    async function fetchThemes() {
+      try {
+        const res = await fetch('/api/content?section=travel-themes');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.content && data.content.items) {
+            setTravelThemes(data.content.items);
+            if (data.content.items.length > 0) {
+              setFormData(prev => ({ ...prev, travelTheme: data.content.items[0].title }));
+            }
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch travel themes", err);
+      }
+    }
+    fetchThemes();
+  }, []);
 
-    // Auto-generate slug from title
+  const handleInputChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    const val = type === 'checkbox' ? checked : value;
+    
+    setFormData(prev => ({ ...prev, [name]: val }));
+
     if (name === 'title') {
-      const slug = generateSlug(value);
-      setFormData(prev => ({
-        ...prev,
-        slug: slug
-      }));
+      setFormData(prev => ({ ...prev, slug: generateSlug(value) }));
     }
   };
 
-  const handleImageUpload = (imageUrl) => {
-    setFormData(prev => ({
-      ...prev,
-      imageUrl: imageUrl
-    }));
+  const handleImageUpload = (url) => {
+    setFormData(prev => ({ ...prev, imageUrl: url }));
+  };
+
+  const handleIncludedChange = (index, value) => {
+    const newIncluded = [...formData.included];
+    newIncluded[index] = value;
+    setFormData(prev => ({ ...prev, included: newIncluded }));
+  };
+
+  const addIncludedField = () => {
+    setFormData(prev => ({ ...prev, included: [...formData.included, ''] }));
+  };
+
+  const removeIncludedField = (index) => {
+    const newIncluded = formData.included.filter((_, i) => i !== index);
+    setFormData(prev => ({ ...prev, included: newIncluded }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
+
+    if (!formData.title || !formData.description || !formData.duration || !formData.price || !formData.imageUrl) {
+      setError('Please fill in all required fields.');
+      return;
+    }
+
+    setIsSubmitting(true);
     setError('');
 
     try {
-      // Convert duration if it's just a number
-      const duration = formData.duration;
-      let formattedDuration = duration;
-      
-      const nights = parseInt(duration);
-      if (!isNaN(nights) && nights > 0 && duration === nights.toString()) {
-        const days = nights + 1;
-        formattedDuration = `${days} Days / ${nights} Nights`;
-      }
-
-      const tourData = {
-        ...formData,
-        duration: formattedDuration
-      };
-
-      const response = await fetch('/api/tours', {
+      const res = await fetch('/api/tours', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(tourData),
+        body: JSON.stringify({
+          ...formData,
+          included: formData.included.filter(item => item),
+        }),
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to create tour');
+      if (res.ok) {
+        router.push('/admin/tours');
+      } else {
+        const data = await res.json();
+        setError(data.message || 'Something went wrong.');
       }
-
-      const result = await response.json();
-      router.push('/admin/tours');
     } catch (err) {
-      setError(err.message);
+      setError('An unexpected error occurred.');
+      console.error(err);
     } finally {
-      setIsLoading(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -112,14 +135,12 @@ export default function CreateTour() {
 
         {/* Form */}
         <div className="bg-white rounded-lg shadow-md p-8">
+          {error && (
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
+              {error}
+            </div>
+          )}
           <form onSubmit={handleSubmit} className="space-y-6">
-            {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
-                {error}
-              </div>
-            )}
-
-            {/* Title */}
             <div>
               <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
                 Tour Title *
@@ -135,37 +156,21 @@ export default function CreateTour() {
                 placeholder="e.g., Cultural Immersion Tour"
               />
             </div>
-
-            {/* Slug */}
             <div>
               <label htmlFor="slug" className="block text-sm font-medium text-gray-700 mb-2">
                 URL Slug *
               </label>
-              <div className="relative">
-                <input
-                  type="text"
-                  id="slug"
-                  name="slug"
-                  value={formData.slug}
-                  onChange={handleInputChange}
-                  required
-                  className="w-full px-3 py-2 pr-20 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
-                  placeholder="e.g., cultural-immersion-tour"
-                />
-                {formData.title && (
-                  <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
-                    <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
-                      Auto-generated
-                    </span>
-                  </div>
-                )}
-              </div>
-              <p className="mt-1 text-sm text-gray-500">
-                This will be used in the tour URL: /tours/[slug]
-              </p>
+              <input
+                type="text"
+                id="slug"
+                name="slug"
+                value={formData.slug}
+                onChange={handleInputChange}
+                required
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
+                placeholder="e.g., cultural-immersion-tour"
+              />
             </div>
-
-            {/* Description */}
             <div>
               <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
                 Description *
@@ -181,148 +186,169 @@ export default function CreateTour() {
                 placeholder="Describe the tour experience, highlights, and what makes it special..."
               />
             </div>
-
-            {/* Duration */}
-            <div>
-              <label htmlFor="duration" className="block text-sm font-medium text-gray-700 mb-2">
-                Duration (Nights) *
-              </label>
-              <input
-                type="text"
-                id="duration"
-                name="duration"
-                value={formData.duration}
-                onChange={handleInputChange}
-                required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
-                placeholder="e.g., 6 or 7 Days / 6 Nights"
-              />
-              <p className="mt-1 text-sm text-gray-500">
-                Type just the number of nights (e.g., 6) or the full format (e.g., 7 Days / 6 Nights)
-              </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label htmlFor="duration" className="block text-sm font-medium text-gray-700 mb-2">
+                  Duration *
+                </label>
+                <input
+                  type="text"
+                  id="duration"
+                  name="duration"
+                  value={formData.duration}
+                  onChange={handleInputChange}
+                  required
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
+                  placeholder="e.g., 6 or 7 Days / 6 Nights"
+                />
+              </div>
+              <div>
+                <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-2">
+                  Price (USD) *
+                </label>
+                <input
+                  type="number"
+                  id="price"
+                  name="price"
+                  value={formData.price}
+                  onChange={handleInputChange}
+                  required
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
+                  placeholder="e.g., 2500"
+                />
+              </div>
+              <div>
+                <label htmlFor="groupSize" className="block text-sm font-medium text-gray-700 mb-2">
+                  Group Size
+                </label>
+                <input
+                  type="text"
+                  id="groupSize"
+                  name="groupSize"
+                  value={formData.groupSize}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
+                  placeholder="e.g., 2-8 people"
+                />
+              </div>
+              <div>
+                <label htmlFor="difficulty" className="block text-sm font-medium text-gray-700 mb-2">
+                  Difficulty
+                </label>
+                <input
+                  type="text"
+                  id="difficulty"
+                  name="difficulty"
+                  value={formData.difficulty}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
+                />
+              </div>
+              <div>
+                <label htmlFor="bestTime" className="block text-sm font-medium text-gray-700 mb-2">
+                  Best Time to Visit
+                </label>
+                <input
+                  type="text"
+                  id="bestTime"
+                  name="bestTime"
+                  value={formData.bestTime}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
+                  placeholder="e.g., March to May, September to November"
+                />
+              </div>
+              <div>
+                <label htmlFor="travelTheme" className="block text-sm font-medium text-gray-700 mb-2">
+                  Travel Theme
+                </label>
+                <select
+                  id="travelTheme"
+                  name="travelTheme"
+                  value={formData.travelTheme}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white"
+                >
+                  <option value="">Select a theme</option>
+                  {travelThemes.map((theme) => (
+                    <option key={theme.title} value={theme.title}>
+                      {theme.title}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
-
-            {/* Price */}
             <div>
-              <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-2">
-                Price (USD) *
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                What&apos;s Included
               </label>
-              <input
-                type="number"
-                id="price"
-                name="price"
-                value={formData.price}
-                onChange={handleInputChange}
-                required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
-                placeholder="e.g., 2500"
-              />
-            </div>
-
-            {/* Group Size */}
-            <div>
-              <label htmlFor="groupSize" className="block text-sm font-medium text-gray-700 mb-2">
-                Group Size *
-              </label>
-              <input
-                type="text"
-                id="groupSize"
-                name="groupSize"
-                value={formData.groupSize}
-                onChange={handleInputChange}
-                required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
-                placeholder="e.g., 2-8 people"
-              />
-            </div>
-
-            {/* Difficulty */}
-            <div>
-              <label htmlFor="difficulty" className="block text-sm font-medium text-gray-700 mb-2">
-                Difficulty Level *
-              </label>
-              <select
-                id="difficulty"
-                name="difficulty"
-                value={formData.difficulty}
-                onChange={handleInputChange}
-                required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
+              {formData.included.map((item, index) => (
+                <div key={index} className="flex items-center mb-2">
+                  <input
+                    type="text"
+                    value={item}
+                    onChange={(e) => handleIncludedChange(index, e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removeIncludedField(index)}
+                    className="ml-2 text-red-600 hover:text-red-800"
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={addIncludedField}
+                className="mt-2 text-blue-600 hover:text-blue-800"
               >
-                <option value="">Select difficulty</option>
-                <option value="Easy">Easy</option>
-                <option value="Moderate">Moderate</option>
-                <option value="Challenging">Challenging</option>
-                <option value="Difficult">Difficult</option>
-              </select>
+                + Add Item
+              </button>
             </div>
-
-            {/* Best Time */}
             <div>
-              <label htmlFor="bestTime" className="block text-sm font-medium text-gray-700 mb-2">
-                Best Time to Visit *
-              </label>
-              <input
-                type="text"
-                id="bestTime"
-                name="bestTime"
-                value={formData.bestTime}
-                onChange={handleInputChange}
-                required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
-                placeholder="e.g., March to May, September to November"
-              />
+              <ImageUpload onUpload={handleImageUpload} label="Tour Image *" />
             </div>
-
-            {/* Image Upload */}
-            <div>
-              <ImageUpload onImageUpload={handleImageUpload} label="Tour Image *" />
-            </div>
-
-            {/* Is Hero Tour */}
             <div className="flex items-center space-x-3">
               <input
                 type="checkbox"
                 id="isHero"
                 name="isHero"
                 checked={formData.isHero}
-                onChange={(e) => setFormData(prev => ({ ...prev, isHero: e.target.checked }))}
-                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                onChange={handleInputChange}
+                className="h-4 w-4 text-blue-600 rounded"
               />
               <label htmlFor="isHero" className="text-sm font-medium text-gray-700">
                 Show in Hero Section
               </label>
             </div>
-
-            {/* Featured Tour */}
             <div className="flex items-center space-x-3">
               <input
                 type="checkbox"
                 id="featured"
                 name="featured"
                 checked={formData.featured}
-                onChange={(e) => setFormData(prev => ({ ...prev, featured: e.target.checked }))}
-                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                onChange={handleInputChange}
+                className="h-4 w-4 text-blue-600 rounded"
               />
               <label htmlFor="featured" className="text-sm font-medium text-gray-700">
                 Featured Tour
               </label>
             </div>
-
-            {/* Submit Button */}
-            <div className="flex justify-end space-x-4 pt-6">
+            <div className="flex justify-end pt-4">
               <Link
                 href="/admin"
-                className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                className="text-gray-600 px-6 py-2 rounded-lg border border-gray-300 hover:bg-gray-100 mr-4"
               >
                 Cancel
               </Link>
               <button
                 type="submit"
-                disabled={isLoading}
-                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                disabled={isSubmitting}
+                className="w-full md:w-auto bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
               >
-                {isLoading ? 'Creating...' : 'Create Tour'}
+                {isSubmitting ? 'Creating...' : 'Create Tour'}
               </button>
             </div>
           </form>

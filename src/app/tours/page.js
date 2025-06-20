@@ -3,6 +3,8 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
+import { generateSlug } from '../lib/utils';
 
 export default function Tours() {
   const [tours, setTours] = useState([]);
@@ -11,6 +13,17 @@ export default function Tours() {
   const [searchTerm, setSearchTerm] = useState('');
   const [priceFilter, setPriceFilter] = useState('all');
   const [durationFilter, setDurationFilter] = useState('all');
+  const [themeFilter, setThemeFilter] = useState('');
+
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  useEffect(() => {
+    const theme = searchParams.get('theme');
+    if (theme) {
+      setThemeFilter(theme);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     async function fetchTours() {
@@ -21,7 +34,6 @@ export default function Tours() {
         if (!res.ok) throw new Error('Failed to fetch tours');
         const data = await res.json();
         setTours(data.tours || []);
-        setFilteredTours(data.tours || []);
       } catch (error) {
         console.error('Error fetching tours:', error);
       } finally {
@@ -33,6 +45,11 @@ export default function Tours() {
 
   useEffect(() => {
     let filtered = tours;
+
+    // Theme filter
+    if (themeFilter) {
+      filtered = filtered.filter(tour => tour.travelTheme && generateSlug(tour.travelTheme) === themeFilter);
+    }
 
     // Search filter
     if (searchTerm) {
@@ -57,7 +74,9 @@ export default function Tours() {
     // Duration filter
     if (durationFilter !== 'all') {
       filtered = filtered.filter(tour => {
-        const days = parseInt(tour.duration.match(/\d+/)[0]);
+        const daysMatch = tour.duration.match(/(\d+)/);
+        if (!daysMatch) return false;
+        const days = parseInt(daysMatch[0], 10);
         if (durationFilter === 'short') return days <= 5;
         if (durationFilter === 'medium') return days > 5 && days <= 8;
         if (durationFilter === 'long') return days > 8;
@@ -66,7 +85,15 @@ export default function Tours() {
     }
 
     setFilteredTours(filtered);
-  }, [tours, searchTerm, priceFilter, durationFilter]);
+  }, [tours, searchTerm, priceFilter, durationFilter, themeFilter]);
+
+  const clearFilters = () => {
+    setSearchTerm('');
+    setPriceFilter('all');
+    setDurationFilter('all');
+    setThemeFilter('');
+    router.push('/tours');
+  };
 
   if (loading) {
     return (
@@ -122,13 +149,9 @@ export default function Tours() {
               <option value="long">Long (9+ days)</option>
             </select>
             {/* Clear Filters */}
-            {(searchTerm || priceFilter !== 'all' || durationFilter !== 'all') && (
+            {(searchTerm || priceFilter !== 'all' || durationFilter !== 'all' || themeFilter) && (
               <button
-                onClick={() => {
-                  setSearchTerm('');
-                  setPriceFilter('all');
-                  setDurationFilter('all');
-                }}
+                onClick={clearFilters}
                 className="px-4 py-3 text-blue-600 hover:text-blue-800 font-semibold border border-blue-100 rounded-lg bg-blue-50"
               >
                 Clear Filters
@@ -145,11 +168,7 @@ export default function Tours() {
           <div className="text-center py-12">
             <p className="text-gray-500 text-lg">No tours match your criteria.</p>
             <button
-              onClick={() => {
-                setSearchTerm('');
-                setPriceFilter('all');
-                setDurationFilter('all');
-              }}
+              onClick={clearFilters}
               className="mt-4 text-blue-600 hover:text-blue-800 font-semibold"
             >
               Clear all filters

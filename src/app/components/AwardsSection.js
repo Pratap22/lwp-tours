@@ -1,34 +1,42 @@
 "use client";
-import { useState, useEffect } from "react";
+import React from 'react';
 
 export default function AwardsSection({ content }) {
-  // Don't render if section is disabled
-  if (!content?.isActive) {
+  if (!content || !content.isActive || !content.items || content.items.length === 0) {
     return null;
   }
 
-  const awards = content?.items?.filter(item => item.isActive) || [
-    { icon: "🏆", title: "Travel Excellence Awards" },
-    { icon: "🤝", title: "Trustworthy Travels" },
-    { icon: "💰", title: "Exceptional value" }
-  ];
+  const activeItems = content.items.filter(item => item.isActive);
+
+  if (activeItems.length === 0) {
+    return null;
+  }
 
   return (
-    <div className="bg-white py-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {awards.map((award, index) => (
+    <section className="py-16 bg-white">
+      <div className="container mx-auto px-4">
+        <div className="text-center mb-12">
+          <h2 className="text-4xl font-bold text-gray-900 mb-4">
+            Awards & Recognition
+          </h2>
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            We are proud to have received numerous awards and recognition for our exceptional service and commitment to sustainable tourism in Bhutan.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {activeItems.map((item, index) => (
             <div key={index} className="text-center">
               <div className="w-16 h-16 bg-yellow-400 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl">{award.icon}</span>
+                <span className="text-2xl">{item.icon}</span>
               </div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                {award.title}
+                {item.title}
               </h3>
             </div>
           ))}
         </div>
       </div>
-    </div>
+    </section>
   );
 } 

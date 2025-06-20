@@ -7,6 +7,7 @@ const TourSchema = new mongoose.Schema({
   duration: { type: String, required: true },
   price: { type: Number, required: true },
   imageUrl: { type: String, required: true },
+  travelTheme: { type: String },
   createdAt: { type: Date, default: Date.now },
   groupSize: { type: String, required: true },
   difficulty: { type: String, required: true },
