@@ -150,15 +150,18 @@ export default async function TourDetail({ params }) {
 
           {/* Sidebar */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-xl shadow-lg p-6 sticky top-8">
+            <div className="bg-white rounded-xl shadow-lg p-6 sticky top-24">
               <div className="text-center mb-6">
                 <div className="text-3xl font-bold text-green-600 mb-2">${tour.price}</div>
                 <div className="text-gray-600">per person</div>
               </div>
               
-              <button className="w-full bg-blue-600 text-white py-4 rounded-lg font-semibold hover:bg-blue-700 transition-colors mb-4">
+              <Link 
+                href={`/contact-us?tour=${encodeURIComponent(tour.title)}`}
+                className="w-full block text-center bg-blue-600 text-white py-4 rounded-lg font-semibold hover:bg-blue-700 transition-colors mb-4"
+              >
                 Book This Tour
-              </button>
+              </Link>
               
               <button className="w-full bg-gray-100 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-200 transition-colors mb-6">
                 Download Itinerary

@@ -6,7 +6,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(request) {
   try {
-    const { name, email, message } = await request.json();
+    const { name, email, message, tour } = await request.json();
 
     if (!name || !email || !message) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -15,8 +15,8 @@ export async function POST(request) {
     const { data, error } = await resend.emails.send({
       from: 'Contact Form <noreply@holidaykosh.com>',
       to: ['queries@holidaykosh.com'],
-      subject: 'New Message from Contact Form',
-      react: ContactEmail({ name, email, message }),
+      subject: tour ? `Tour Inquiry: ${tour}` : 'New Message from Contact Form',
+      react: ContactEmail({ name, email, message, tour }),
     });
 
     if (error) {

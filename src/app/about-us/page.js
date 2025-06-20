@@ -1,5 +1,8 @@
+'use client';
+
 import Image from "next/image";
 import Link from "next/link";
+import { CheckCircleIcon, StarIcon, HeartIcon } from '@heroicons/react/24/solid';
 
 export default function AboutUs() {
   const team = [
@@ -72,7 +75,7 @@ export default function AboutUs() {
       position: "Team Member",
       email: "tomiedelrey762@gmail.com",
       github: "https://github.com/K-2716",
-      image: "https://randomuser.me/api/portraits/women/39.jpg",
+      image: "https://avatars.githubusercontent.com/u/206063615",
       bio: "Karma's friendly nature and professionalism make her a favorite among travelers.",
     },
     {
@@ -173,78 +176,144 @@ export default function AboutUs() {
     },
   ];
 
-  return (
-    <main className="bg-white min-h-[70vh] mx-auto py-20 px-4">
-      <h1 className="text-4xl font-bold mb-6 text-blue-900">
-        About LWP Travel & Tours
-      </h1>
-      <p className="text-lg text-gray-700 mb-4">
-        Welcome to LWP Travel & Tours! We are passionate about sharing the
-        beauty, culture, and adventure of Bhutan with travelers from around the
-        world. Our team of local experts is dedicated to crafting authentic,
-        memorable journeys tailored to your interests.
-      </p>
-      <p className="text-gray-600 mb-4">
-        With years of experience and a deep love for our homeland, we offer a
-        wide range of tours, from cultural immersions and festival experiences
-        to trekking, luxury escapes, and more. Our mission is to provide you
-        with a seamless, enriching, and sustainable travel experience in Bhutan.
-      </p>
-      <p className="text-gray-600 mb-12">
-        Thank you for considering LWP Travel & Tours for your Bhutan adventure.
-        We look forward to welcoming you as our guest—and sending you home as
-        family!
-      </p>
+  const values = [
+    {
+      icon: CheckCircleIcon,
+      title: 'Authenticity',
+      description: 'We craft real, immersive experiences that connect you with the heart of Bhutan.',
+    },
+    {
+      icon: StarIcon,
+      title: 'Excellence',
+      description: 'From planning to execution, we deliver exceptional service and quality.',
+    },
+    {
+      icon: HeartIcon,
+      title: 'Passion',
+      description: 'Our deep love for Bhutan drives us to share its magic with the world.',
+    },
+  ];
 
-      <section>
-        <h2 className="text-3xl font-bold text-blue-800 mb-8 text-center">
-          Meet the Team
-        </h2>
-        <div className="grid grid-cols-1 gap-10 px-20">
-          {team.map((member, idx) => {
-            const isEven = idx % 2 === 1;
-            return (
-              <div
-                key={idx}
-                className={`bg-gray-50 rounded-xl shadow p-6 flex flex-col md:flex-row items-center border border-gray-100 h-full max-w-3xl ${
-                  isEven ? "md:flex-row-reverse md:ml-auto" : "md:mr-auto"
-                } md:px-10`}
-                style={{ width: "100%" }}
-              >
-                <Image
-                  src={member.image}
-                  alt={member.name}
-                  width={144}
-                  height={144}
-                  className="w-32 h-32 md:w-36 md:h-36 rounded-full object-cover mb-4 md:mb-0 md:mx-8 border-4 border-white shadow flex-shrink-0"
-                />
-                <div className="flex-1 text-center md:text-left flex flex-col justify-center">
-                  <h3 className="text-xl font-bold text-gray-900 mb-1">
-                    {member.name}
-                  </h3>
-                  <p className="text-blue-700 text-base mb-2 font-semibold">
-                    {member.position}
-                  </p>
-                  <p className="text-gray-600 mb-2 text-sm">{member.bio}</p>
-                  {member.email && (
-                    <p className="text-gray-500 text-xs mb-1 break-all">
-                      {member.email}
-                    </p>
-                  )}
-                  <Link
-                    href={member.github}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-gray-500 hover:text-blue-600 text-xs underline"
-                  >
-                    GitHub
-                  </Link>
-                </div>
-              </div>
-            );
-          })}
+  return (
+    <div className="bg-white">
+      {/* Hero Section */}
+      <div className="relative h-96">
+        <Image
+          src="/hero-cultural.jpg"
+          alt="About Us Hero"
+          layout="fill"
+          objectFit="cover"
+          className="opacity-80"
+        />
+        <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="text-center text-white p-4">
+            <h1 className="text-5xl font-extrabold mb-4 text-shadow">About LWP Travel & Tours</h1>
+            <p className="text-xl max-w-2xl text-shadow">
+              Your trusted local experts for unforgettable journeys in the Land of the Thunder Dragon.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Intro Section */}
+      <section className="py-24 bg-gray-50">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-4xl font-bold text-gray-900 mb-6">Welcome to Your Bhutan Adventure</h2>
+          <p className="text-lg text-gray-700 mb-4">
+            At LWP Travel & Tours, we don&apos;t just sell tours; we craft lifelong memories. As a premier, locally-owned tour operator based in the heart of Bhutan, we are passionate about sharing the magic of our kingdom with you.
+          </p>
+          <p className="text-lg text-gray-600">
+            Our team of dedicated local experts leverages deep-rooted knowledge and a love for our heritage to design authentic, immersive, and personalized journeys. Whether you seek cultural discovery, spiritual enrichment, or thrilling adventure, we are your trusted guides to the wonders of Bhutan.
+          </p>
         </div>
       </section>
-    </main>
+
+      {/* Our Values Section */}
+      <section className="py-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">Our Core Values</h2>
+            <p className="text-lg text-gray-600">The principles that guide every journey we create.</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
+            {values.map((value) => (
+              <div key={value.title} className="flex flex-col items-center">
+                <value.icon className="h-12 w-12 text-blue-600 mb-4" />
+                <h3 className="text-2xl font-semibold text-gray-900 mb-2">{value.title}</h3>
+                <p className="text-gray-600">{value.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Team Section */}
+      <section className="py-24 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">Meet Our Passionate Team</h2>
+            <p className="text-lg text-gray-600">The local experts dedicated to making your journey perfect.</p>
+          </div>
+          <div className="grid grid-cols-12 gap-6">
+            {team.map((member, idx) => {
+              const layouts = [
+                'col-span-12 sm:col-span-6 md:col-span-4 row-span-2 min-h-[32rem]', // Tall
+                'col-span-12 sm:col-span-6 md:col-span-4 min-h-[24rem]',       // Standard
+                'col-span-12 sm:col-span-6 md:col-span-4 min-h-[24rem]',       // Standard
+                'col-span-12 sm:col-span-6 md:col-span-8 min-h-[24rem]',       // Wide
+                'col-span-12 sm:col-span-6 md:col-span-4 min-h-[24rem]',       // Standard
+                'col-span-12 sm:col-span-6 md:col-span-6 min-h-[24rem]',       // Medium
+                'col-span-12 sm:col-span-6 md:col-span-6 min-h-[24rem]',       // Medium
+              ];
+              const layoutClass = layouts[idx % layouts.length];
+
+              return (
+                <div key={member.name} className={`group relative rounded-xl overflow-hidden shadow-lg ${layoutClass}`}>
+                  {/* Background Image (Always visible) */}
+                  <Image
+                    src={member.image}
+                    alt={member.name}
+                    layout="fill"
+                    objectFit="cover"
+                    className="absolute inset-0 w-full h-full transition-transform duration-500 group-hover:scale-110"
+                  />
+                  
+                  {/* Overlay and Content (Appear on hover) */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                    <div className="absolute bottom-0 left-0 p-6">
+                      <h3 className="text-2xl font-bold text-white">{member.name}</h3>
+                      <p className="text-blue-300 font-semibold mb-2">{member.position}</p>
+                      <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-500 pt-2">
+                          <p className="text-sm text-gray-200 mb-4">{member.bio}</p>
+                          <div className="flex justify-start space-x-4">
+                          {member.email && <a href={`mailto:${member.email}`} className="text-blue-300 hover:text-white">Email</a>}
+                          {member.github && <a href={member.github} target="_blank" rel="noopener noreferrer" className="text-blue-300 hover:text-white">GitHub</a>}
+                          </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-24 bg-white">
+        <div className="max-w-4xl mx-auto text-center px-4">
+          <h2 className="text-4xl font-bold text-gray-900 mb-6">Ready to Explore Bhutan?</h2>
+          <p className="text-lg text-gray-600 mb-8">
+            Let&apos;s plan your dream journey to the last Himalayan kingdom. Our experts are here to help you every step of the way.
+          </p>
+          <Link
+            href="/tours"
+            className="inline-block bg-blue-600 text-white px-10 py-4 rounded-full text-lg font-semibold hover:bg-blue-700 transition-all duration-300 shadow-md hover:shadow-lg"
+          >
+            Discover Our Tours
+          </Link>
+        </div>
+      </section>
+    </div>
   );
 }
