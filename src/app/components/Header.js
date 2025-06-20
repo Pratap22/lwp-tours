@@ -18,6 +18,7 @@ export default function Header({ content }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [navigation, setNavigation] = useState(defaultNavigation);
+  const [showAdminLink, setShowAdminLink] = useState(false);
   const pathname = usePathname();
   
   // Only apply scroll behavior on home page
@@ -90,8 +91,23 @@ export default function Header({ content }) {
             ))}
           </nav>
 
-          {/* CTA Button */}
-          <div className="hidden md:flex items-center">
+          {/* CTA Button & Secret Admin Link */}
+          <div 
+            className="hidden md:flex items-center relative"
+            onMouseEnter={() => setShowAdminLink(true)}
+            onMouseLeave={() => setShowAdminLink(false)}
+          >
+            {showAdminLink && (
+              <Link
+                href="/admin"
+                className={`
+                  ${isScrolled ? 'text-gray-700 hover:text-blue-600' : 'text-white hover:text-white/80'}
+                  px-3 py-2 text-sm font-medium transition-all duration-300 animate-fade-in
+                `}
+              >
+                Admin
+              </Link>
+            )}
             <Link
               href="/contact-us"
               className={`${
