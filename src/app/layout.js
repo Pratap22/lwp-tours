@@ -18,9 +18,7 @@ async function getContent() {
       (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
 
     const res = await fetch(`${baseUrl}/api/content`, {
-      next: { 
-        revalidate: 3600 // Revalidate every hour
-      }
+      cache: 'no-store'
     });
     
     if (!res.ok) {

@@ -9,12 +9,9 @@ import BookingProcess from "./components/BookingProcess";
 import Testimonials from "./components/Testimonials";
 import Gallery from "./components/Gallery";
 
-// Fetch options with caching
+// Fetch options without caching
 const fetchOptions = {
-  next: { 
-    revalidate: 3600, // Cache for 1 hour
-    tags: ['content'] // Add cache tag for manual revalidation
-  }
+  cache: 'no-store'
 };
 
 async function getPageData() {

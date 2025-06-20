@@ -16,9 +16,7 @@ export default function Tours() {
     async function fetchTours() {
       try {
         const res = await fetch('/api/tours', {
-          next: { 
-            revalidate: 3600 // Cache for 1 hour
-          }
+          cache: 'no-store'
         });
         if (!res.ok) throw new Error('Failed to fetch tours');
         const data = await res.json();
