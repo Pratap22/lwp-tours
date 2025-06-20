@@ -10,6 +10,8 @@ import Testimonials from "./components/Testimonials";
 import Gallery from "./components/Gallery";
 import { getTours, getContent } from "./lib/data";
 
+export const revalidate = 0; // Ensures dynamic data fetching on every request
+
 async function getPageData() {
   try {
     const [toursData, contentData] = await Promise.all([
