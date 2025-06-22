@@ -35,7 +35,7 @@ export async function PUT(request, { params }) {
     const body = await request.json();
     
     // Validate required fields
-    const { title, slug: newSlug, description, duration, price, imageUrl, groupSize, difficulty, bestTime, travelTheme } = body;
+    const { title, slug: newSlug, description, duration, price, imageUrl, groupSize, difficulty, bestTime, travelTheme, itinerary, excluded } = body;
     
     const requiredFields = {
       title,
@@ -47,7 +47,8 @@ export async function PUT(request, { params }) {
       groupSize,
       difficulty,
       bestTime,
-      travelTheme
+      travelTheme,
+      itinerary
     };
 
     const missingFields = Object.entries(requiredFields)
@@ -94,7 +95,9 @@ export async function PUT(request, { params }) {
         isHero: Boolean(body.isHero),
         featured: Boolean(body.featured),
         included: body.included || currentTour?.included || [],
-        travelTheme: travelTheme || ''
+        travelTheme: travelTheme || '',
+        itinerary: itinerary || currentTour?.itinerary || [],
+        excluded: body.excluded || currentTour?.excluded || []
       }
     };
 

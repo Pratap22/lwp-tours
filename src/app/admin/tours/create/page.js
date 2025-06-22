@@ -22,6 +22,8 @@ export default function CreateTour() {
     featured: false,
     travelTheme: '',
     included: [''],
+    excluded: [''],
+    itinerary: [{ short: '', long: '' }],
   });
   const [travelThemes, setTravelThemes] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -30,13 +32,16 @@ export default function CreateTour() {
   useEffect(() => {
     async function fetchThemes() {
       try {
-        const res = await fetch('/api/content?section=travel-themes');
+        const res = await fetch('/api/content');
         if (res.ok) {
           const data = await res.json();
-          if (data.content && data.content.items) {
-            setTravelThemes(data.content.items);
-            if (data.content.items.length > 0) {
-              setFormData(prev => ({ ...prev, travelTheme: data.content.items[0].title }));
+          if (data.sections) {
+            const travelThemesSection = data.sections.find(section => section.sectionId === 'travelThemes');
+            if (travelThemesSection && travelThemesSection.themes) {
+              setTravelThemes(travelThemesSection.themes);
+              if (travelThemesSection.themes.length > 0) {
+                setFormData(prev => ({ ...prev, travelTheme: travelThemesSection.themes[0].title }));
+              }
             }
           }
         }
@@ -77,6 +82,36 @@ export default function CreateTour() {
     setFormData(prev => ({ ...prev, included: newIncluded }));
   };
 
+  const handleExcludedChange = (index, value) => {
+    const newExcluded = [...formData.excluded];
+    newExcluded[index] = value;
+    setFormData(prev => ({ ...prev, excluded: newExcluded }));
+  };
+
+  const addExcludedField = () => {
+    setFormData(prev => ({ ...prev, excluded: [...formData.excluded, ''] }));
+  };
+
+  const removeExcludedField = (index) => {
+    const newExcluded = formData.excluded.filter((_, i) => i !== index);
+    setFormData(prev => ({ ...prev, excluded: newExcluded }));
+  };
+
+  const handleItineraryChange = (index, field, value) => {
+    const newItinerary = [...formData.itinerary];
+    newItinerary[index] = { ...newItinerary[index], [field]: value };
+    setFormData(prev => ({ ...prev, itinerary: newItinerary }));
+  };
+
+  const addItineraryField = () => {
+    setFormData(prev => ({ ...prev, itinerary: [...formData.itinerary, { short: '', long: '' }] }));
+  };
+
+  const removeItineraryField = (index) => {
+    const newItinerary = formData.itinerary.filter((_, i) => i !== index);
+    setFormData(prev => ({ ...prev, itinerary: newItinerary }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -97,6 +132,8 @@ export default function CreateTour() {
         body: JSON.stringify({
           ...formData,
           included: formData.included.filter(item => item),
+          excluded: formData.excluded.filter(item => item),
+          itinerary: formData.itinerary.filter(item => item.short && item.long),
         }),
       });
 
@@ -305,6 +342,83 @@ export default function CreateTour() {
                 className="mt-2 text-blue-600 hover:text-blue-800"
               >
                 + Add Item
+              </button>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                What&apos;s Not Included
+              </label>
+              {formData.excluded.map((item, index) => (
+                <div key={index} className="flex items-center mb-2">
+                  <input
+                    type="text"
+                    value={item}
+                    onChange={(e) => handleExcludedChange(index, e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removeExcludedField(index)}
+                    className="ml-2 text-red-600 hover:text-red-800"
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={addExcludedField}
+                className="mt-2 text-blue-600 hover:text-blue-800"
+              >
+                + Add Item
+              </button>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Itinerary
+              </label>
+              {formData.itinerary.map((item, index) => (
+                <div key={index} className="border border-gray-200 rounded-lg p-4 mb-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <h4 className="font-medium text-gray-700">Day {index + 1}</h4>
+                    <button
+                      type="button"
+                      onClick={() => removeItineraryField(index)}
+                      className="text-red-600 hover:text-red-800 text-sm"
+                    >
+                      Remove Day
+                    </button>
+                  </div>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-sm text-gray-600 mb-1">Short Itinerary</label>
+                      <input
+                        type="text"
+                        value={item.short}
+                        onChange={(e) => handleItineraryChange(index, 'short', e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                        placeholder="Brief description of the day's activities"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm text-gray-600 mb-1">Long Itinerary</label>
+                      <textarea
+                        value={item.long}
+                        onChange={(e) => handleItineraryChange(index, 'long', e.target.value)}
+                        rows={3}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                        placeholder="Detailed description of the day's activities, meals, accommodation, etc."
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={addItineraryField}
+                className="mt-2 text-blue-600 hover:text-blue-800"
+              >
+                + Add Day
               </button>
             </div>
             <div>

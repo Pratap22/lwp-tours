@@ -13,6 +13,11 @@ const TourSchema = new mongoose.Schema({
   difficulty: { type: String, required: true },
   bestTime: { type: String, required: true },
   included: [{ type: String }],
+  excluded: [{ type: String }],
+  itinerary: [{
+    short: { type: String, required: true },
+    long: { type: String, required: true }
+  }],
   isHero: { type: Boolean, default: false },
   featured: { type: Boolean, default: false, required: false },
 });
