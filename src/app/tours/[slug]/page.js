@@ -25,15 +25,17 @@ async function getTour(slug) {
 }
 
 export async function generateMetadata({ params }) {
-  const tour = await getTour(params.slug);
+  const { slug } = await params;
+  const tour = await getTour(slug);
   return {
     title: tour ? `${tour.title} - LWP Travel & Tours` : 'Tour Not Found',
     description: tour?.description || 'Tour details not available',
   };
 }
 
-export default async function TourDetail({ params }) {
-  const tour = await getTour(params.slug);
+export default async function TourDetail({ params, searchParams }) {
+  const { slug } = await params;
+  const tour = await getTour(slug);
 
   if (!tour) {
     return (
