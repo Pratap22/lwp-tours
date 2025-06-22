@@ -4,7 +4,7 @@ import { usePathname } from 'next/navigation';
 import Header from './Header';
 import Footer from './Footer';
 
-export default function ConditionalLayout({ content, children }) {
+export default function ConditionalLayout({ content, footer, children }) {
   const pathname = usePathname();
   const isAdminPage = pathname.startsWith('/admin');
 
@@ -12,7 +12,7 @@ export default function ConditionalLayout({ content, children }) {
     <>
       {!isAdminPage && <Header content={content} />}
       <main>{children}</main>
-      {!isAdminPage && <Footer />}
+      {!isAdminPage && <Footer footer={footer} />}
     </>
   );
 } 

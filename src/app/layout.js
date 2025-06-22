@@ -17,7 +17,7 @@ export default async function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${inter.className} bg-white`}>
-        <ConditionalLayout content={content}>
+        <ConditionalLayout content={content} footer={content?.footer}>
           {children}
         </ConditionalLayout>
       </body>
