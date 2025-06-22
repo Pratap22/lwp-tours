@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { UsersIcon, MapPinIcon, HeartIcon, PhoneIcon, CheckBadgeIcon, StarIcon } from '@heroicons/react/24/outline';
 import { useState, useEffect } from 'react';
+import CTASection from '../components/CTASection';
 
 export default function WhyUs() {
   const [pageData, setPageData] = useState(null);
@@ -158,20 +159,7 @@ export default function WhyUs() {
       )}
 
       {/* CTA Section */}
-      <section className="py-20 bg-gray-800 text-white">
-        <div className="max-w-4xl mx-auto text-center px-4">
-          <h2 className="text-4xl font-bold mb-6">Begin Your Unforgettable Journey</h2>
-          <p className="text-lg opacity-90 mb-8">
-            You are not just a tourist to us; you are our guest. Let us show you the heart and soul of our beautiful kingdom.
-          </p>
-          <Link
-            href="/contact-us"
-            className="inline-block bg-blue-600 text-white px-10 py-4 rounded-full text-lg font-semibold hover:bg-blue-500 transition-all duration-300 shadow-lg"
-          >
-            Start Planning Today
-          </Link>
-        </div>
-      </section>
+      <CTASection content={pageData?.cta} />
     </div>
   );
 } 

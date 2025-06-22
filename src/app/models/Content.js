@@ -31,6 +31,12 @@ const sectionSchemaDefinition = {
   content: { type: String },
   ctaText: { type: String },
   ctaLink: { type: String },
+  cta: {
+    title: { type: String },
+    content: { type: String },
+    ctaText: { type: String },
+    ctaLink: { type: String },
+  },
   themeTitle: { type: String },
   themeContent: { type: String },
   images: [{
