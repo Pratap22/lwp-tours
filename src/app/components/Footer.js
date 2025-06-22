@@ -132,7 +132,7 @@ export default function Footer({ footer: footerContent }) {
             <div className="flex space-x-4">
               {footer.socialLinks.map((link) => (
                 <Link
-                  key={link.href}
+                  key={`${link.name}-${link.href}`}
                   href={link.href}
                   className="hover:text-blue-400"
                 >

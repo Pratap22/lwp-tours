@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 
@@ -21,9 +21,9 @@ export default function HeroSection({ heroTours = [] }) {
   const [[page, direction], setPage] = useState([0, 0]);
   const length = heroTours.length;
 
-  const paginate = (newDirection) => {
-    setPage([page + newDirection, newDirection]);
-  };
+  const paginate = useCallback((newDirection) => {
+    setPage(([currentPage, _]) => [currentPage + newDirection, newDirection]);
+  }, []);
   
   const tourIndex = (page % length + length) % length;
 
@@ -35,7 +35,7 @@ export default function HeroSection({ heroTours = [] }) {
     }, 8000); // Change slide every 5 seconds
 
     return () => clearTimeout(timer);
-  }, [page, length]);
+  }, [page, length, paginate]);
 
   const prevSlide = () => {
     paginate(-1);

@@ -14,13 +14,11 @@ export default function ImageUploader({
   const [linkInput, setLinkInput] = useState('');
   const fileInputRef = useRef(null);
 
-  const stableInitialUrls = useMemo(() => JSON.stringify(initialUrls), [initialUrls]);
-
   useEffect(() => {
     // Ensure initialUrls is always treated as an array
     const urls = Array.isArray(initialUrls) ? initialUrls : (initialUrls ? [initialUrls] : []);
     setImageUrls(urls);
-  }, [stableInitialUrls]);
+  }, [initialUrls]);
 
   const handleUploadResult = (newUrls) => {
     const finalUrls = multiple ? newUrls : newUrls[0] || '';
