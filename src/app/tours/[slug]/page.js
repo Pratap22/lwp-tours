@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { headers } from 'next/headers';
+import DownloadButton from '../components/DownloadButton';
 
 async function getTour(slug) {
   const headersList = await headers();
@@ -64,7 +65,7 @@ export default async function TourDetail({ params }) {
         </nav>
 
         {/* Hero Section */}
-        <div className="relative h-96 rounded-2xl overflow-hidden mb-12">
+        <div id="tour-hero" className="relative h-96 rounded-2xl overflow-hidden mb-12">
           <Image
             src={tour.image || '/hero-cultural.jpg'}
             alt={tour.title}
@@ -80,10 +81,10 @@ export default async function TourDetail({ params }) {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+        <div id="content-grid" className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           {/* Main Content */}
-          <div className="lg:col-span-2">
-            <div className="bg-white rounded-xl shadow-lg p-8 mb-8">
+          <div id="tour-main-content" className="lg:col-span-2">
+            <div id="tour-overview" className="bg-white rounded-xl shadow-lg p-8 mb-8">
               <h2 className="text-2xl font-bold text-gray-900 mb-6">Tour Overview</h2>
               <p className="text-gray-700 leading-relaxed text-lg mb-6">{tour.description}</p>
               
@@ -109,7 +110,7 @@ export default async function TourDetail({ params }) {
 
             {/* Itinerary Section */}
             {tour.itinerary && tour.itinerary.length > 0 && (
-              <div className="bg-white rounded-xl shadow-lg p-8 mb-8">
+              <div id="tour-itinerary" className="bg-white rounded-xl shadow-lg p-8 mb-8">
                 <h2 className="text-2xl font-bold text-gray-900 mb-6">Tour Itinerary</h2>
                 <div className="space-y-6">
                   {tour.itinerary.map((day, index) => (
@@ -131,7 +132,7 @@ export default async function TourDetail({ params }) {
             )}
 
             {/* What's Included Section */}
-            <div className="bg-white rounded-xl shadow-lg p-8 mb-8">
+            <div id="tour-included" className="bg-white rounded-xl shadow-lg p-8 mb-8">
               <h3 className="text-xl font-bold text-gray-900 mb-4">What&apos;s Included</h3>
               <ul className="space-y-3 mb-8">
                 {tour.included && tour.included.length > 0 ? (
@@ -188,7 +189,7 @@ export default async function TourDetail({ params }) {
 
             {/* What's Not Included Section */}
             {tour.excluded && tour.excluded.length > 0 && (
-              <div className="bg-white rounded-xl shadow-lg p-8 mb-8">
+              <div id="tour-excluded" className="bg-white rounded-xl shadow-lg p-8 mb-8">
                 <h3 className="text-xl font-bold text-gray-900 mb-4">What&apos;s Not Included</h3>
                 <ul className="space-y-3">
                   {tour.excluded.map((item, index) => (
@@ -205,7 +206,7 @@ export default async function TourDetail({ params }) {
           </div>
 
           {/* Sidebar */}
-          <div className="lg:col-span-1">
+          <div id="tour-sidebar" className="lg:col-span-1">
             <div className="bg-white rounded-xl shadow-lg p-6 sticky top-24">
               <div className="text-center mb-6">
                 <div className="text-3xl font-bold text-green-600 mb-2">${tour.price}</div>
@@ -219,9 +220,9 @@ export default async function TourDetail({ params }) {
                 Book This Tour
               </Link>
               
-              <button className="w-full bg-gray-100 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-200 transition-colors mb-6">
-                Download Itinerary
-              </button>
+              {tour.itinerary && tour.itinerary.length > 0 && (
+                <DownloadButton tourSlug={tour.slug} tour={tour} />
+              )}
 
               <div className="border-t pt-6">
                 <h3 className="font-semibold text-gray-900 mb-4">Need Help?</h3>
