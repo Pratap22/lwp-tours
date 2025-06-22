@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import ImageUploader from '../../../components/ImageUploader';
 
-export default function GallerySection({ content, onSave, saving }) {
+export default function GallerySection({ content, onSave, saving, showSaveButton = true }) {
   const [images, setImages] = useState(content.images || []);
   const [isActive, setIsActive] = useState(content.isActive);
   const [title, setTitle] = useState(content.title || '');
@@ -60,13 +60,15 @@ export default function GallerySection({ content, onSave, saving }) {
             />
             <span className="ml-2 text-sm text-gray-700">Show Section</span>
           </label>
-          <button
-            onClick={handleSave}
-            disabled={saving}
-            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
-          >
-            {saving ? 'Saving...' : 'Save Changes'}
-          </button>
+          {showSaveButton && (
+            <button
+              onClick={handleSave}
+              disabled={saving}
+              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+            >
+              {saving ? 'Saving...' : 'Save Changes'}
+            </button>
+          )}
         </div>
       </div>
 
@@ -155,8 +157,8 @@ export default function GallerySection({ content, onSave, saving }) {
                   Gallery Image
                 </label>
                 <ImageUploader
-                  currentImage={image.src}
-                  onImageUpload={(imageUrl) => updateImage(index, 'src', imageUrl)}
+                  initialUrls={image.src ? [image.src] : []}
+                  onUpload={(imageUrl) => updateImage(index, 'src', imageUrl)}
                   folder="gallery"
                 />
               </div>

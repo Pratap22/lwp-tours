@@ -274,7 +274,7 @@ const TeamMemberList = ({ items, setItems }) => {
   );
 };
 
-export default function PageEditor({ pageData: initialData, onSave, onCancel }) {
+export default function PageEditor({ pageData: initialData, onSave, onCancel, showSaveButton = true }) {
   const [pageData, setPageData] = useState(initialData);
 
   useEffect(() => {
@@ -449,22 +449,24 @@ export default function PageEditor({ pageData: initialData, onSave, onCancel }) 
         </>
       )}
 
-      <div className="flex justify-end space-x-4 pt-6">
-        <button
-          type="button"
-          onClick={onCancel}
-          className="px-6 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300"
-        >
-          Cancel
-        </button>
-        <button
-          type="button"
-          onClick={() => onSave(pageData)}
-          className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-        >
-          Save Changes
-        </button>
-      </div>
+      {showSaveButton && (
+        <div className="flex justify-end space-x-4 pt-6">
+          <button
+            type="button"
+            onClick={onCancel}
+            className="px-6 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={() => onSave(pageData)}
+            className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+          >
+            Save Changes
+          </button>
+        </div>
+      )}
     </div>
   );
 } 

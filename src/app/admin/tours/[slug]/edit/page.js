@@ -4,6 +4,7 @@ import { useState, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import ImageUploader from "../../../../components/ImageUploader";
+import StickyFooter from "../../../components/StickyFooter";
 import { generateSlug } from "../../../../lib/utils";
 import Image from "next/image";
 
@@ -154,8 +155,7 @@ export default function EditTour({ params }) {
     }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSave = async () => {
     setIsSaving(true);
     setError("");
 
@@ -187,6 +187,10 @@ export default function EditTour({ params }) {
     }
   };
 
+  const handleCancel = () => {
+    router.push("/admin/tours");
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -199,147 +203,296 @@ export default function EditTour({ params }) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-8">
-          <div className="flex items-center justify-between">
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <div className="bg-white shadow-sm border-b border-gray-200">
+        <div className="max-w-4xl mx-auto">
+          <div className="flex items-center justify-between py-6 px-4 sm:px-6 lg:px-8">
             <div>
               <h1 className="text-3xl font-bold text-gray-900">Edit Tour</h1>
-              <p className="mt-2 text-gray-600">Update tour information for &quot;{formData.title}&quot;</p>
+              <p className="mt-2 text-lg text-gray-600">Update tour information for &quot;{formData.title}&quot;</p>
             </div>
             <Link
               href="/admin/tours"
-              className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
+              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 shadow-sm"
             >
+              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
               Back to Tours
             </Link>
           </div>
         </div>
+      </div>
 
-        <div className="bg-white rounded-lg shadow-md p-8">
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
-                {error}
+      {/* Form */}
+      <div className="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8 pb-24">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+          {error && (
+            <div className="bg-red-50 border-l-4 border-red-400 p-4 m-6 rounded-lg">
+              <div className="flex">
+                <div className="flex-shrink-0">
+                  <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div className="ml-3">
+                  <p className="text-sm text-red-700">{error}</p>
+                </div>
               </div>
-            )}
-
-            <div>
-              <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">Tour Title *</label>
-              <input type="text" id="title" name="title" value={formData.title} onChange={handleInputChange} required className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 bg-white"/>
             </div>
+          )}
 
-            <div>
-              <label htmlFor="slug" className="block text-sm font-medium text-gray-700 mb-2">URL Slug *</label>
-              <input type="text" id="slug" name="slug" value={formData.slug} onChange={handleInputChange} required className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 bg-white"/>
-            </div>
-            
-            <div>
-              <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">Description *</label>
-              <textarea id="description" name="description" value={formData.description} onChange={handleInputChange} required rows={6} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 bg-white"></textarea>
-            </div>
+          <div className="p-8 space-y-8">
+            {/* Basic Information */}
+            <div className="space-y-6">
+              <h2 className="text-xl font-semibold text-gray-900 border-b border-gray-200 pb-2">Basic Information</h2>
+              
+              <div>
+                <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">Tour Title *</label>
+                <input 
+                  type="text" 
+                  id="title" 
+                  name="title" 
+                  value={formData.title} 
+                  onChange={handleInputChange} 
+                  required 
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white transition-colors duration-200"
+                />
+              </div>
 
-            <ImageUploader 
-              onUpload={handleImageUpload}
-              initialUrls={formData.imageUrl ? [formData.imageUrl] : []}
-              label="Main Tour Image *"
-            />
-
-            <ImageUploader 
-              onUpload={handleGalleryUpload}
-              initialUrls={formData.gallery}
-              label="Tour Gallery"
-              multiple
-            />
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label htmlFor="duration" className="block text-sm font-medium text-gray-700 mb-2">Duration *</label>
-                <input type="text" id="duration" name="duration" value={formData.duration} onChange={handleInputChange} required className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 bg-white"/>
+                <label htmlFor="slug" className="block text-sm font-medium text-gray-700 mb-2">URL Slug *</label>
+                <input 
+                  type="text" 
+                  id="slug" 
+                  name="slug" 
+                  value={formData.slug} 
+                  onChange={handleInputChange} 
+                  required 
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white transition-colors duration-200"
+                />
               </div>
+              
               <div>
-                <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-2">Price (USD) *</label>
-                <input type="number" id="price" name="price" value={formData.price} onChange={handleInputChange} required className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 bg-white"/>
-              </div>
-              <div>
-                <label htmlFor="groupSize" className="block text-sm font-medium text-gray-700 mb-2">Group Size</label>
-                <input type="text" id="groupSize" name="groupSize" value={formData.groupSize} onChange={handleInputChange} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 bg-white"/>
-              </div>
-              <div>
-                <label htmlFor="difficulty" className="block text-sm font-medium text-gray-700 mb-2">Difficulty</label>
-                <input type="text" id="difficulty" name="difficulty" value={formData.difficulty} onChange={handleInputChange} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 bg-white"/>
-              </div>
-              <div>
-                <label htmlFor="bestTime" className="block text-sm font-medium text-gray-700 mb-2">Best Time to Visit</label>
-                <input type="text" id="bestTime" name="bestTime" value={formData.bestTime} onChange={handleInputChange} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 bg-white"/>
-              </div>
-              <div>
-                <label htmlFor="travelTheme" className="block text-sm font-medium text-gray-700 mb-2">Travel Theme</label>
-                <select id="travelTheme" name="travelTheme" value={formData.travelTheme} onChange={handleInputChange} className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-gray-900">
-                  <option value="">Select a theme</option>
-                  {travelThemes.map((theme) => (
-                    <option key={theme.title} value={theme.title}>
-                      {theme.title}
-                    </option>
-                  ))}
-                </select>
+                <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">Description *</label>
+                <textarea 
+                  id="description" 
+                  name="description" 
+                  value={formData.description} 
+                  onChange={handleInputChange} 
+                  required 
+                  rows={6}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white transition-colors duration-200"
+                ></textarea>
               </div>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">What&apos;s Included</label>
+            {/* Images */}
+            <div className="space-y-6">
+              <h2 className="text-xl font-semibold text-gray-900 border-b border-gray-200 pb-2">Images</h2>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Main Tour Image *</label>
+                <ImageUploader 
+                  onUpload={handleImageUpload}
+                  initialUrls={formData.imageUrl ? [formData.imageUrl] : []}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Tour Gallery</label>
+                <ImageUploader 
+                  onUpload={handleGalleryUpload}
+                  initialUrls={formData.gallery}
+                  multiple
+                />
+              </div>
+            </div>
+
+            {/* Tour Details */}
+            <div className="space-y-6">
+              <h2 className="text-xl font-semibold text-gray-900 border-b border-gray-200 pb-2">Tour Details</h2>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label htmlFor="duration" className="block text-sm font-medium text-gray-700 mb-2">Duration *</label>
+                  <input 
+                    type="text" 
+                    id="duration" 
+                    name="duration" 
+                    value={formData.duration} 
+                    onChange={handleInputChange} 
+                    required 
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white transition-colors duration-200"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-2">Price (USD) *</label>
+                  <input 
+                    type="number" 
+                    id="price" 
+                    name="price" 
+                    value={formData.price} 
+                    onChange={handleInputChange} 
+                    required 
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white transition-colors duration-200"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="groupSize" className="block text-sm font-medium text-gray-700 mb-2">Group Size</label>
+                  <input 
+                    type="text" 
+                    id="groupSize" 
+                    name="groupSize" 
+                    value={formData.groupSize} 
+                    onChange={handleInputChange} 
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white transition-colors duration-200"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="difficulty" className="block text-sm font-medium text-gray-700 mb-2">Difficulty</label>
+                  <input 
+                    type="text" 
+                    id="difficulty" 
+                    name="difficulty" 
+                    value={formData.difficulty} 
+                    onChange={handleInputChange} 
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white transition-colors duration-200"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="bestTime" className="block text-sm font-medium text-gray-700 mb-2">Best Time to Visit</label>
+                  <input 
+                    type="text" 
+                    id="bestTime" 
+                    name="bestTime" 
+                    value={formData.bestTime} 
+                    onChange={handleInputChange} 
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white transition-colors duration-200"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="travelTheme" className="block text-sm font-medium text-gray-700 mb-2">Travel Theme</label>
+                  <select 
+                    id="travelTheme" 
+                    name="travelTheme" 
+                    value={formData.travelTheme} 
+                    onChange={handleInputChange} 
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
+                  >
+                    <option value="">Select a theme</option>
+                    {travelThemes.map((theme) => (
+                      <option key={theme.title} value={theme.title}>
+                        {theme.title}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {/* What's Included */}
+            <div className="space-y-6">
+              <h2 className="text-xl font-semibold text-gray-900 border-b border-gray-200 pb-2">What&apos;s Included</h2>
               {formData.included.map((item, index) => (
-                <div key={index} className="flex items-center mb-2">
-                  <input type="text" value={item} onChange={(e) => handleIncludedChange(index, e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 bg-white"/>
-                  <button type="button" onClick={() => removeIncludedField(index)} className="ml-2 text-red-600 hover:text-red-800">Remove</button>
+                <div key={index} className="flex items-center gap-3">
+                  <input 
+                    type="text" 
+                    value={item} 
+                    onChange={(e) => handleIncludedChange(index, e.target.value)} 
+                    className="flex-1 px-4 py-3 border border-gray-300 rounded-lg text-gray-900 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
+                  />
+                  <button 
+                    type="button" 
+                    onClick={() => removeIncludedField(index)} 
+                    className="p-3 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg transition-colors duration-200"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                    </svg>
+                  </button>
                 </div>
               ))}
-              <button type="button" onClick={addIncludedField} className="mt-2 text-blue-600 hover:text-blue-800">+ Add Item</button>
+              <button 
+                type="button" 
+                onClick={addIncludedField} 
+                className="inline-flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800 font-medium"
+              >
+                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                Add Item
+              </button>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">What&apos;s Excluded</label>
+            {/* What's Excluded */}
+            <div className="space-y-6">
+              <h2 className="text-xl font-semibold text-gray-900 border-b border-gray-200 pb-2">What&apos;s Excluded</h2>
               {formData.excluded.map((item, index) => (
-                <div key={index} className="flex items-center mb-2">
-                  <input type="text" value={item} onChange={(e) => handleExcludedChange(index, e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 bg-white"/>
-                  <button type="button" onClick={() => removeExcludedField(index)} className="ml-2 text-red-600 hover:text-red-800">Remove</button>
+                <div key={index} className="flex items-center gap-3">
+                  <input 
+                    type="text" 
+                    value={item} 
+                    onChange={(e) => handleExcludedChange(index, e.target.value)} 
+                    className="flex-1 px-4 py-3 border border-gray-300 rounded-lg text-gray-900 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
+                  />
+                  <button 
+                    type="button" 
+                    onClick={() => removeExcludedField(index)} 
+                    className="p-3 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg transition-colors duration-200"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                    </svg>
+                  </button>
                 </div>
               ))}
-              <button type="button" onClick={addExcludedField} className="mt-2 text-blue-600 hover:text-blue-800">+ Add Item</button>
+              <button 
+                type="button" 
+                onClick={addExcludedField} 
+                className="inline-flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800 font-medium"
+              >
+                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                Add Item
+              </button>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Itinerary</label>
+            {/* Itinerary */}
+            <div className="space-y-6">
+              <h2 className="text-xl font-semibold text-gray-900 border-b border-gray-200 pb-2">Itinerary</h2>
               {formData.itinerary.map((item, index) => (
-                <div key={index} className="border border-gray-200 rounded-lg p-4 mb-4">
-                  <div className="flex items-center justify-between mb-3">
-                    <h4 className="font-medium text-gray-700">Day {index + 1}</h4>
+                <div key={index} className="border border-gray-200 rounded-lg p-6 bg-gray-50">
+                  <div className="flex items-center justify-between mb-4">
+                    <h4 className="font-semibold text-gray-900">Day {index + 1}</h4>
                     <button
                       type="button"
                       onClick={() => removeItineraryField(index)}
-                      className="text-red-600 hover:text-red-800 text-sm"
+                      className="text-red-600 hover:text-red-800 text-sm font-medium hover:bg-red-50 px-3 py-1 rounded-lg transition-colors duration-200"
                     >
                       Remove Day
                     </button>
                   </div>
-                  <div className="space-y-3">
+                  <div className="space-y-4">
                     <div>
-                      <label className="block text-sm text-gray-600 mb-1">Short Itinerary</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Short Itinerary</label>
                       <input
                         type="text"
                         value={item.short}
                         onChange={(e) => handleItineraryChange(index, 'short', e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 bg-white"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-900 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
                         placeholder="Brief description of the day's activities"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm text-gray-600 mb-1">Long Itinerary</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Long Itinerary</label>
                       <textarea
                         value={item.long}
                         onChange={(e) => handleItineraryChange(index, 'long', e.target.value)}
                         rows={3}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 bg-white"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-900 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
                         placeholder="Detailed description of the day's activities, meals, accommodation, etc."
                       />
                     </div>
@@ -349,30 +502,57 @@ export default function EditTour({ params }) {
               <button
                 type="button"
                 onClick={addItineraryField}
-                className="mt-2 text-blue-600 hover:text-blue-800"
+                className="inline-flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800 font-medium"
               >
-                + Add Day
+                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                Add Day
               </button>
             </div>
 
-            <div className="flex items-center space-x-3">
-              <input type="checkbox" id="isHero" name="isHero" checked={formData.isHero} onChange={handleInputChange} className="h-4 w-4 text-blue-600 rounded"/>
-              <label htmlFor="isHero" className="text-sm font-medium text-gray-700">Show in Hero Section</label>
+            {/* Tour Settings */}
+            <div className="space-y-4">
+              <h2 className="text-xl font-semibold text-gray-900 border-b border-gray-200 pb-2">Tour Settings</h2>
+              
+              <div className="flex items-center space-x-3 p-4 bg-blue-50 rounded-lg">
+                <input 
+                  type="checkbox" 
+                  id="isHero" 
+                  name="isHero" 
+                  checked={formData.isHero} 
+                  onChange={handleInputChange} 
+                  className="h-5 w-5 text-blue-600 rounded focus:ring-blue-500"
+                />
+                <label htmlFor="isHero" className="text-sm font-medium text-gray-700">
+                  Show in Hero Section
+                </label>
+              </div>
+              
+              <div className="flex items-center space-x-3 p-4 bg-green-50 rounded-lg">
+                <input 
+                  type="checkbox" 
+                  id="featured" 
+                  name="featured" 
+                  checked={formData.featured} 
+                  onChange={handleInputChange} 
+                  className="h-5 w-5 text-green-600 rounded focus:ring-green-500"
+                />
+                <label htmlFor="featured" className="text-sm font-medium text-gray-700">
+                  Featured Tour
+                </label>
+              </div>
             </div>
-            <div className="flex items-center space-x-3">
-              <input type="checkbox" id="featured" name="featured" checked={formData.featured} onChange={handleInputChange} className="h-4 w-4 text-blue-600 rounded"/>
-              <label htmlFor="featured" className="text-sm font-medium text-gray-700">Featured Tour</label>
-            </div>
-
-            <div className="flex justify-end pt-4">
-              <Link href="/admin/tours" className="text-gray-600 px-6 py-2 rounded-lg border border-gray-300 hover:bg-gray-100 mr-4">Cancel</Link>
-              <button type="submit" disabled={isSaving} className="px-6 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50">
-                {isSaving ? "Saving..." : "Save Changes"}
-              </button>
-            </div>
-          </form>
+          </div>
         </div>
       </div>
+
+      {/* Sticky Footer */}
+      <StickyFooter 
+        onSave={handleSave}
+        onCancel={handleCancel}
+        saving={isSaving}
+      />
     </div>
   );
 }

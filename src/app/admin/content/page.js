@@ -3,6 +3,7 @@ import { useState, useEffect, memo, useMemo } from 'react';
 import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { toast } from 'react-hot-toast';
+import StickyFooter from '../components/StickyFooter';
 
 // Import all section components
 import GallerySection from './components/GallerySection';
@@ -17,9 +18,9 @@ import SmallGroupToursSection from './components/SmallGroupToursSection';
 import NavigationSection from './components/NavigationSection';
 
 const HomepageHeader = memo(() => (
-  <div className="bg-white shadow">
+  <div className="bg-white shadow-sm border-b border-gray-200">
     <div className="max-w-7xl mx-auto">
-      <div className="flex justify-between items-center py-6 px-4 sm:px-6 lg:px-8 border-b">
+      <div className="flex justify-between items-center py-6 px-4 sm:px-6 lg:px-8">
         <div>
           <h1 className="text-2xl font-semibold text-gray-900">Homepage Content</h1>
           <p className="mt-1 text-sm text-gray-500">Manage your website homepage content and sections</p>
@@ -27,8 +28,11 @@ const HomepageHeader = memo(() => (
         <div className="flex items-center gap-4">
           <Link
             href="/admin"
-            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 shadow-sm"
           >
+            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
             Back to Dashboard
           </Link>
         </div>
@@ -40,7 +44,7 @@ HomepageHeader.displayName = 'HomepageHeader';
 
 const HomepageSidebar = memo(({ sections, activeTab, onTabClick, onMoveSection, tabs }) => (
   <div className="lg:col-span-3 sticky top-8 h-fit">
-    <div className="bg-white rounded-lg shadow-sm border">
+    <div className="bg-white rounded-lg shadow-sm border border-gray-200">
       <div className="p-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">Homepage Sections</h2>
         <p className="text-sm text-gray-600 mb-4">Drag to reorder • Click to edit</p>
@@ -92,6 +96,7 @@ const SectionEditor = memo(({ activeTab, content, onSave, saving }) => {
     content: getSectionById(activeTab),
     onSave: (data) => onSave(activeTab, data),
     saving,
+    showSaveButton: false, // Hide individual save buttons
   };
 
   const sectionMap = {
@@ -109,7 +114,7 @@ const SectionEditor = memo(({ activeTab, content, onSave, saving }) => {
   
   return (
     <div className="lg:col-span-9">
-      <div className="bg-white rounded-lg shadow-sm border">
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200">
         <div className="p-8">
           {sectionMap[activeTab] || null}
         </div>
@@ -124,6 +129,7 @@ export default function ContentManagement() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState('gallery');
+  const [pendingChanges, setPendingChanges] = useState({});
 
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -175,6 +181,7 @@ export default function ContentManagement() {
       if (response.ok) {
         const updatedContent = await response.json();
         setContent(updatedContent);
+        setPendingChanges({});
         toast.success('Content saved successfully!');
       } else {
         throw new Error('Failed to save content');
@@ -185,6 +192,18 @@ export default function ContentManagement() {
     } finally {
       setSaving(false);
     }
+  };
+
+  const handleSave = () => {
+    // Get the current section data and save it
+    const currentSection = content.sections.find(sec => sec.sectionId === activeTab);
+    if (currentSection) {
+      saveContent(activeTab, currentSection);
+    }
+  };
+
+  const handleCancel = () => {
+    router.push('/admin');
   };
 
   const moveSection = (fromIndex, toIndex) => {
@@ -275,7 +294,7 @@ export default function ContentManagement() {
     <div className="min-h-screen bg-gray-50">
       <HomepageHeader />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-24">
         <div className="lg:grid lg:grid-cols-12 lg:gap-8">
           <HomepageSidebar 
             sections={sortedSections}
@@ -293,6 +312,13 @@ export default function ContentManagement() {
           />
         </div>
       </div>
+
+      {/* Sticky Footer */}
+      <StickyFooter 
+        onSave={handleSave}
+        onCancel={handleCancel}
+        saving={saving}
+      />
     </div>
   );
 } 

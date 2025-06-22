@@ -1,7 +1,7 @@
 "use client";
 import { useState } from 'react';
 
-export default function TravelThemesSection({ content, onSave, saving }) {
+export default function TravelThemesSection({ content, onSave, saving, showSaveButton = true }) {
   const [themes, setThemes] = useState(content.themes || []);
   const [isActive, setIsActive] = useState(content.isActive !== undefined ? content.isActive : true);
   const [title, setTitle] = useState(content.title || 'Find Your Perfect Experience');
@@ -53,13 +53,15 @@ export default function TravelThemesSection({ content, onSave, saving }) {
             />
             <span className="ml-2 text-gray-700">Show Section</span>
           </label>
-          <button
-            onClick={handleSave}
-            disabled={saving}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
-          >
-            {saving ? 'Saving...' : 'Save Changes'}
-          </button>
+          {showSaveButton && (
+            <button
+              onClick={handleSave}
+              disabled={saving}
+              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
+            >
+              {saving ? 'Saving...' : 'Save Changes'}
+            </button>
+          )}
         </div>
       </div>
       

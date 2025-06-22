@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from 'react';
 
-export default function NavigationSection({ content, onSave, saving }) {
+export default function NavigationSection({ content, onSave, saving, showSaveButton = true }) {
   const [data, setData] = useState({
     isActive: true,
     navigationItems: []
@@ -63,13 +63,15 @@ export default function NavigationSection({ content, onSave, saving }) {
             />
             <span className="ml-2 text-sm text-gray-700">Active</span>
           </label>
-          <button
-            onClick={handleSave}
-            disabled={saving}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
-          >
-            {saving ? 'Saving...' : 'Save Changes'}
-          </button>
+          {showSaveButton && (
+            <button
+              onClick={handleSave}
+              disabled={saving}
+              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
+            >
+              {saving ? 'Saving...' : 'Save Changes'}
+            </button>
+          )}
         </div>
       </div>
 

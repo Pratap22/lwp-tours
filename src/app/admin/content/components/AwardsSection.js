@@ -1,7 +1,7 @@
 "use client";
 import { useState } from 'react';
 
-export default function AwardsSection({ content, onSave, saving }) {
+export default function AwardsSection({ content, onSave, saving, showSaveButton = true }) {
   const [items, setItems] = useState(content.items || []);
   const [isActive, setIsActive] = useState(content.isActive);
 
@@ -51,13 +51,15 @@ export default function AwardsSection({ content, onSave, saving }) {
             />
             <span className="ml-2 text-gray-700">Show Section</span>
           </label>
-          <button
-            onClick={handleSave}
-            disabled={saving}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
-          >
-            {saving ? 'Saving...' : 'Save Changes'}
-          </button>
+          {showSaveButton && (
+            <button
+              onClick={handleSave}
+              disabled={saving}
+              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
+            >
+              {saving ? 'Saving...' : 'Save Changes'}
+            </button>
+          )}
         </div>
       </div>
 
