@@ -281,6 +281,9 @@ export async function PUT(request) {
     if (body.siteLogo !== undefined) {
       content.siteLogo = body.siteLogo;
     }
+    if (body.footer) {
+      content.footer = body.footer;
+    }
 
     // Update sections
     if (body.sections && Array.isArray(body.sections)) {

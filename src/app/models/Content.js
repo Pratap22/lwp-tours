@@ -114,6 +114,22 @@ const SectionSchema = new mongoose.Schema(sectionSchemaDefinition, { _id: false 
 const ContentSchema = new mongoose.Schema({
   siteName: { type: String, default: 'Bhutan Travel' },
   siteLogo: { type: String, default: '/logo.svg' },
+  footer: {
+    companyName: { type: String, default: 'LWP Travel & Tours' },
+    description: { type: String, default: 'Local Experts | Authentic Experiences' },
+    address: { type: String, default: 'Bumthang, Bhutan' },
+    email: { type: String, default: 'info@holidaykosh.com' },
+    phone: { type: String, default: '+975 17 123 456' },
+    copyright: { type: String, default: 'LWP Travel & Tours. All rights reserved.' },
+    quickLinks: [{
+      name: { type: String },
+      href: { type: String },
+    }],
+    socialLinks: [{
+      name: { type: String },
+      href: { type: String },
+    }],
+  },
   sections: [SectionSchema],
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
