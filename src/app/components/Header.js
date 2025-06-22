@@ -16,7 +16,7 @@ const defaultNavigation = [
   { name: "Admin", href: "/admin" },
 ];
 
-const MenuItem = ({ item, isScrolled, onLinkHover }) => {
+const MenuItem = ({ item, isScrolled }) => {
   const pathname = usePathname();
   const hasChildren = item.children && item.children.length > 0;
   const isActive = item.href === pathname || (hasChildren && item.children.some(c => c.href === pathname));
@@ -35,8 +35,6 @@ const MenuItem = ({ item, isScrolled, onLinkHover }) => {
             ? 'bg-blue-600 hover:bg-blue-700 text-white' 
             : 'bg-white/20 hover:bg-white/30 text-white'
         } px-6 py-2 rounded-full text-sm font-medium transition-all duration-300`}
-        onMouseEnter={() => onLinkHover(item.name)}
-        onMouseLeave={() => onLinkHover(null)}
       >
         {item.name}
       </Link>
@@ -76,8 +74,6 @@ const MenuItem = ({ item, isScrolled, onLinkHover }) => {
     <Link
       href={item.href}
       className={linkClasses}
-      onMouseEnter={() => onLinkHover(item.name)}
-      onMouseLeave={() => onLinkHover(null)}
     >
       {item.name}
     </Link>
@@ -88,9 +84,7 @@ export default function Header({ content }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [navigation, setNavigation] = useState(defaultNavigation);
-  const [showAdminLink, setShowAdminLink] = useState(false);
   const pathname = usePathname();
-  const hoverTimeout = useRef(null);
 
   const siteName = content?.siteName || "Bhutan Travel";
   const siteLogo = content?.siteLogo;
@@ -116,15 +110,6 @@ export default function Header({ content }) {
       setNavigation(defaultNavigation);
     }
   }, [content]);
-
-  const handleContactHover = (itemName) => {
-    clearTimeout(hoverTimeout.current);
-    if (itemName === 'Contact Us') {
-      hoverTimeout.current = setTimeout(() => setShowAdminLink(true), 10000);
-    } else {
-      setShowAdminLink(false);
-    }
-  };
 
   return (
     <header className={`fixed w-full top-0 z-50 transition-all duration-300 ${
@@ -159,25 +144,10 @@ export default function Header({ content }) {
                 key={item.name}
                 item={item}
                 isScrolled={isScrolled}
-                onLinkHover={handleContactHover}
               />
             ))}
           </nav>
           
-          {/* Admin link appears on hover */}
-          {showAdminLink && (
-            <Link
-              href="/admin"
-              className={`
-                hidden md:block
-                ${isScrolled ? 'text-gray-700 hover:text-blue-600' : 'text-white hover:text-white/80'}
-                px-3 py-2 text-sm font-medium transition-all duration-300 animate-fade-in
-              `}
-            >
-              Admin
-            </Link>
-          )}
-
           {/* Mobile menu button */}
           <div className="md:hidden">
             <button

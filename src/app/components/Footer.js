@@ -88,6 +88,7 @@ export default function Footer({ footer: footerContent }) {
       { name: "Tours", href: "/tours" },
       { name: "Travel Info", href: "/travel-info" },
       { name: "Contact", href: "/contact-us" },
+      { name: "Admin", href: "/admin"},
     ],
     socialLinks: [
       { name: "facebook", href: "#" },
