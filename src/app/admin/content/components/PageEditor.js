@@ -274,13 +274,7 @@ const TeamMemberList = ({ items, setItems }) => {
   );
 };
 
-export default function PageEditor({ pageData: initialData, onSave, onCancel, showSaveButton = true }) {
-  const [pageData, setPageData] = useState(initialData);
-
-  useEffect(() => {
-    setPageData(initialData);
-  }, [initialData]);
-
+export default function PageEditor({ pageData, setPageData, onCancel, showSaveButton = true }) {
   if (!pageData) {
     return (
       <div className="text-center py-12">
@@ -301,6 +295,17 @@ export default function PageEditor({ pageData: initialData, onSave, onCancel, sh
       hero: {
         ...prev.hero,
         [name]: value,
+      }
+    }));
+  };
+
+  const handleCtaChange = (e) => {
+    const { name, value } = e.target;
+    setPageData(prev => ({
+      ...prev,
+      cta: {
+        ...prev.cta,
+        [name]: value
       }
     }));
   };
@@ -354,40 +359,36 @@ export default function PageEditor({ pageData: initialData, onSave, onCancel, sh
         </div>
       </AccordionWrapper>
 
-      <AccordionWrapper title="Intro Section">
-        <div className="space-y-4">
-          <div>
-            <label htmlFor="intro-title" className="block text-sm font-medium text-gray-700">Intro Title</label>
-            <input
-              type="text"
-              name="title"
-              id="intro-title"
-              value={pageData.title || ''}
-              onChange={handleInputChange}
-              className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm text-gray-900 bg-white"
-              placeholder="e.g. Welcome to Our Website"
-            />
-          </div>
-          <div>
-            <label htmlFor="intro-content" className="block text-sm font-medium text-gray-700">Intro Content</label>
-            <textarea
-              name="content"
-              id="intro-content"
-              rows="5"
-              value={pageData.content || ''}
-              onChange={handleInputChange}
-              className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm text-gray-900 bg-white"
-              placeholder="A brief introduction about the page content."
-            ></textarea>
-          </div>
-        </div>
-      </AccordionWrapper>
-
+      {/* Main Content for about-us */}
       {pageData.sectionId === 'about-us' && (
         <>
-          <AccordionWrapper title="Our Core Values">
+          <AccordionWrapper title="Intro Section">
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Title</label>
+                <input
+                  type="text"
+                  name="title"
+                  value={pageData.title || ''}
+                  onChange={handleInputChange}
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-gray-900 bg-white"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Subtitle</label>
+                <textarea
+                  name="subtitle"
+                  value={pageData.subtitle || ''}
+                  onChange={handleInputChange}
+                  rows="5"
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-gray-900 bg-white"
+                />
+              </div>
+            </div>
+          </AccordionWrapper>
+          <AccordionWrapper title="Our Values">
             <EditableList
-              title="Our Core Values"
+              title="Values"
               items={pageData.values || []}
               setItems={(newItems) => handleListChange('values', newItems)}
               fields={[
@@ -406,28 +407,39 @@ export default function PageEditor({ pageData: initialData, onSave, onCancel, sh
         </>
       )}
 
+      {/* Main Content for why-us */}
       {pageData.sectionId === 'why-us' && (
-        <AccordionWrapper title="Reasons to Choose Us">
-          <EditableList
-            title="Reasons"
-            items={pageData.reasons || []}
-            setItems={(newItems) => handleListChange('reasons', newItems)}
-            fields={[
-              { name: 'icon', label: 'Icon', type: 'icon' },
-              { name: 'title', label: 'Title' },
-              { name: 'description', label: 'Description', type: 'textarea' },
-            ]}
-          />
-        </AccordionWrapper>
-      )}
-
-      {pageData.sectionId === 'travel-info' && (
         <>
-          <AccordionWrapper title="Key Information">
+          <AccordionWrapper title="Intro Section">
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Title</label>
+                <input
+                  type="text"
+                  name="title"
+                  value={pageData.title || ''}
+                  onChange={handleInputChange}
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-gray-900 bg-white"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Subtitle</label>
+                <textarea
+                  name="subtitle"
+                  value={pageData.subtitle || ''}
+                  onChange={handleInputChange}
+                  rows="3"
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-gray-900 bg-white"
+                />
+              </div>
+            </div>
+          </AccordionWrapper>
+
+          <AccordionWrapper title="Reasons to Choose Us">
             <EditableList
-              title="Key Info Items"
-              items={pageData.items || []}
-              setItems={(newItems) => handleListChange('items', newItems)}
+              title="Reasons"
+              items={pageData.reasons || []}
+              setItems={(newItems) => handleListChange('reasons', newItems)}
               fields={[
                 { name: 'icon', label: 'Icon', type: 'icon' },
                 { name: 'title', label: 'Title' },
@@ -435,7 +447,110 @@ export default function PageEditor({ pageData: initialData, onSave, onCancel, sh
               ]}
             />
           </AccordionWrapper>
-          <AccordionWrapper title="Frequently Asked Questions">
+
+          <AccordionWrapper title="Our Promise to You Section">
+            <div className="text-sm text-gray-600 mb-4">
+              <p>This section displays a list of promises on the &apos;Why Us&apos; page, each with an icon and a short title.</p>
+              <p className="mt-2">On the public page, this appears under the heading &quot;Our Promise to You&quot;.</p>
+            </div>
+            <EditableList
+              title="Promise Items"
+              items={pageData.steps || []}
+              setItems={(newItems) => handleListChange('steps', newItems)}
+              fields={[
+                { name: 'icon', label: 'Icon (e.g., an emoji like 🤝)' },
+                { name: 'title', label: 'Promise Title' },
+              ]}
+            />
+          </AccordionWrapper>
+
+          <AccordionWrapper title="Call to Action Section">
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Title</label>
+                <input
+                  type="text"
+                  name="title"
+                  value={pageData.cta?.title || ''}
+                  onChange={handleCtaChange}
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-gray-900 bg-white"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Subtitle</label>
+                <textarea
+                  name="content"
+                  value={pageData.cta?.content || ''}
+                  onChange={handleCtaChange}
+                  rows="3"
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-gray-900 bg-white"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Button Text</label>
+                <input
+                  type="text"
+                  name="ctaText"
+                  value={pageData.cta?.ctaText || ''}
+                  onChange={handleCtaChange}
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-gray-900 bg-white"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Button Link</label>
+                <input
+                  type="text"
+                  name="ctaLink"
+                  value={pageData.cta?.ctaLink || ''}
+                  onChange={handleCtaChange}
+                  placeholder="/contact-us"
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-gray-900 bg-white"
+                />
+              </div>
+            </div>
+          </AccordionWrapper>
+        </>
+      )}
+
+      {/* Main Content for travel-info */}
+      {pageData.sectionId === 'travel-info' && (
+        <>
+          <AccordionWrapper title="Intro Section">
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Title</label>
+                <input
+                  type="text"
+                  name="title"
+                  value={pageData.title || ''}
+                  onChange={handleInputChange}
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-gray-900 bg-white"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Subtitle</label>
+                <textarea
+                  name="subtitle"
+                  value={pageData.subtitle || ''}
+                  onChange={handleInputChange}
+                  rows="3"
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-gray-900 bg-white"
+                />
+              </div>
+            </div>
+          </AccordionWrapper>
+          <AccordionWrapper title="General Information">
+             <EditableList
+              title="Benefits"
+              items={pageData.benefits || []}
+              setItems={(newItems) => handleListChange('benefits', newItems)}
+              fields={[
+                { name: 'text', label: 'Benefit Text' },
+                { name: 'description', label: 'Description', type: 'textarea' },
+              ]}
+            />
+          </AccordionWrapper>
+          <AccordionWrapper title="FAQs">
             <EditableList
               title="FAQs"
               items={pageData.faqs || []}
@@ -450,7 +565,7 @@ export default function PageEditor({ pageData: initialData, onSave, onCancel, sh
       )}
 
       {showSaveButton && (
-        <div className="flex justify-end space-x-4 pt-6">
+        <div className="mt-8 flex justify-end space-x-4">
           <button
             type="button"
             onClick={onCancel}
@@ -469,4 +584,4 @@ export default function PageEditor({ pageData: initialData, onSave, onCancel, sh
       )}
     </div>
   );
-} 
+}

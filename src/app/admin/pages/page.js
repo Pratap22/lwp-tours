@@ -67,7 +67,7 @@ export default function PagesManagement() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState('about-us');
-  const [pendingChanges, setPendingChanges] = useState({});
+  const [currentPageData, setCurrentPageData] = useState(null);
 
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -82,6 +82,13 @@ export default function PagesManagement() {
   useEffect(() => {
     fetchContent();
   }, []);
+
+  useEffect(() => {
+    if (content) {
+      const page = content.sections.find(sec => sec.sectionId === activeTab);
+      setCurrentPageData(page ? { ...page } : null);
+    }
+  }, [activeTab, content]);
 
   const handleTabClick = (tabId) => {
     setActiveTab(tabId);
@@ -106,7 +113,7 @@ export default function PagesManagement() {
     setSaving(true);
     try {
       const updatedSections = content.sections.map(section => 
-        section.sectionId === sectionId ? { ...section, ...data } : section
+        section.sectionId === sectionId ? data : section
       );
 
       const response = await fetch('/api/content', {
@@ -123,7 +130,6 @@ export default function PagesManagement() {
       if (response.ok) {
         const updatedContent = await response.json();
         setContent(updatedContent);
-        setPendingChanges({});
         toast.success('Content saved successfully!');
       } else {
         throw new Error('Failed to save content');
@@ -137,22 +143,17 @@ export default function PagesManagement() {
   };
 
   const handleSave = () => {
-    // Get the current page data and save it
-    const currentPage = content.sections.find(sec => sec.sectionId === activeTab);
-    if (currentPage) {
-      saveContent(activeTab, currentPage);
+    if (currentPageData) {
+      saveContent(activeTab, currentPageData);
     }
   };
 
   const handleCancel = () => {
-    router.push('/admin');
+    // Revert changes by re-syncing with the original content
+    const page = content.sections.find(sec => sec.sectionId === activeTab);
+    setCurrentPageData(page ? { ...page } : null);
   };
-
-  const getSectionById = (sectionId) => {
-    if (!content || !content.sections) return null;
-    return content.sections.find(section => section.sectionId === sectionId);
-  };
-
+  
   const tabs = useMemo(() => [
     { id: 'about-us', name: 'About Us Page', icon: '📄' },
     { id: 'why-us', name: 'Why Us Page', icon: '📄' },
@@ -170,8 +171,6 @@ export default function PagesManagement() {
     );
   }
 
-  const pageData = getSectionById(activeTab);
-
   return (
     <div className="min-h-screen bg-gray-50">
       <ManagementHeader />
@@ -185,9 +184,9 @@ export default function PagesManagement() {
               <div className="p-8">
                 <PageEditor 
                   key={activeTab}
-                  pageData={pageData} 
-                  onSave={(data) => saveContent(activeTab, data)}
-                  onCancel={() => {}}
+                  pageData={currentPageData} 
+                  setPageData={setCurrentPageData}
+                  onCancel={handleCancel}
                   showSaveButton={false}
                 />
               </div>
@@ -196,7 +195,6 @@ export default function PagesManagement() {
         </div>
       </div>
 
-      {/* Sticky Footer */}
       <StickyFooter 
         onSave={handleSave}
         onCancel={handleCancel}
