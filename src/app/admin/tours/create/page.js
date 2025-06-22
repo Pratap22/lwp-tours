@@ -3,8 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import ImageUpload from '../../../components/ImageUpload';
-import GalleryUpload from '../../../components/GalleryUpload';
+import ImageUploader from '../../../components/ImageUploader';
 import { generateSlug } from '../../../lib/utils';
 
 export default function CreateTour() {
@@ -65,7 +64,7 @@ export default function CreateTour() {
     }
   };
 
-  const handleImageUpload = (url) => {
+  const handleSingleImageUpload = (url) => {
     setFormData(prev => ({ ...prev, imageUrl: url }));
   };
 
@@ -231,9 +230,16 @@ export default function CreateTour() {
               />
             </div>
 
-            <ImageUpload onImageUpload={handleImageUpload} label="Main Tour Image *" />
+            <ImageUploader 
+              onUpload={handleSingleImageUpload} 
+              label="Main Tour Image *" 
+            />
 
-            <GalleryUpload onGalleryUpload={handleGalleryUpload} />
+            <ImageUploader 
+              onUpload={handleGalleryUpload} 
+              label="Tour Gallery" 
+              multiple 
+            />
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
@@ -277,7 +283,7 @@ export default function CreateTour() {
                   value={formData.groupSize}
                   onChange={handleInputChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
-                  placeholder="e.g., 2-8 people"
+                  placeholder="e.g., Max 12 people"
                 />
               </div>
               <div>
@@ -291,6 +297,7 @@ export default function CreateTour() {
                   value={formData.difficulty}
                   onChange={handleInputChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
+                  placeholder="e.g., Moderate"
                 />
               </div>
               <div>
@@ -304,19 +311,19 @@ export default function CreateTour() {
                   value={formData.bestTime}
                   onChange={handleInputChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
-                  placeholder="e.g., March to May, September to November"
+                  placeholder="e.g., March - May, Sept - Nov"
                 />
               </div>
               <div>
                 <label htmlFor="travelTheme" className="block text-sm font-medium text-gray-700 mb-2">
                   Travel Theme
                 </label>
-                <select
-                  id="travelTheme"
-                  name="travelTheme"
-                  value={formData.travelTheme}
+                <select 
+                  id="travelTheme" 
+                  name="travelTheme" 
+                  value={formData.travelTheme} 
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-gray-900"
                 >
                   <option value="">Select a theme</option>
                   {travelThemes.map((theme) => (
@@ -327,68 +334,58 @@ export default function CreateTour() {
                 </select>
               </div>
             </div>
+
+            {/* What's Included */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                What&apos;s Included
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">What&apos;s Included</label>
               {formData.included.map((item, index) => (
                 <div key={index} className="flex items-center mb-2">
                   <input
                     type="text"
                     value={item}
                     onChange={(e) => handleIncludedChange(index, e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 bg-white"
+                    placeholder="e.g., All meals"
                   />
-                  <button
-                    type="button"
-                    onClick={() => removeIncludedField(index)}
-                    className="ml-2 text-red-600 hover:text-red-800"
-                  >
-                    Remove
+                  <button type="button" onClick={() => removeIncludedField(index)} className="ml-2 text-red-600 hover:text-red-800 p-1 rounded-full">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                    </svg>
                   </button>
                 </div>
               ))}
-              <button
-                type="button"
-                onClick={addIncludedField}
-                className="mt-2 text-blue-600 hover:text-blue-800"
-              >
+              <button type="button" onClick={addIncludedField} className="mt-2 text-sm text-blue-600 hover:text-blue-800">
                 + Add Item
               </button>
             </div>
+            
+            {/* What's Excluded */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                What&apos;s Not Included
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">What&apos;s Excluded</label>
               {formData.excluded.map((item, index) => (
                 <div key={index} className="flex items-center mb-2">
                   <input
                     type="text"
                     value={item}
                     onChange={(e) => handleExcludedChange(index, e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 bg-white"
+                    placeholder="e.g., International flights"
                   />
-                  <button
-                    type="button"
-                    onClick={() => removeExcludedField(index)}
-                    className="ml-2 text-red-600 hover:text-red-800"
-                  >
-                    Remove
+                  <button type="button" onClick={() => removeExcludedField(index)} className="ml-2 text-red-600 hover:text-red-800 p-1 rounded-full">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                    </svg>
                   </button>
                 </div>
               ))}
-              <button
-                type="button"
-                onClick={addExcludedField}
-                className="mt-2 text-blue-600 hover:text-blue-800"
-              >
+              <button type="button" onClick={addExcludedField} className="mt-2 text-sm text-blue-600 hover:text-blue-800">
                 + Add Item
               </button>
             </div>
+
+            {/* Itinerary */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Itinerary
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-4">Itinerary</label>
               {formData.itinerary.map((item, index) => (
                 <div key={index} className="border border-gray-200 rounded-lg p-4 mb-4">
                   <div className="flex items-center justify-between mb-3">
@@ -408,7 +405,7 @@ export default function CreateTour() {
                         type="text"
                         value={item.short}
                         onChange={(e) => handleItineraryChange(index, 'short', e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 bg-white"
                         placeholder="Brief description of the day's activities"
                       />
                     </div>
@@ -418,7 +415,7 @@ export default function CreateTour() {
                         value={item.long}
                         onChange={(e) => handleItineraryChange(index, 'long', e.target.value)}
                         rows={3}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 bg-white"
                         placeholder="Detailed description of the day's activities, meals, accommodation, etc."
                       />
                     </div>
@@ -428,50 +425,29 @@ export default function CreateTour() {
               <button
                 type="button"
                 onClick={addItineraryField}
-                className="mt-2 text-blue-600 hover:text-blue-800"
+                className="mt-2 text-sm text-blue-600 hover:text-blue-800"
               >
                 + Add Day
               </button>
             </div>
-            <div className="flex items-center space-x-3">
-              <input
-                type="checkbox"
-                id="isHero"
-                name="isHero"
-                checked={formData.isHero}
-                onChange={handleInputChange}
-                className="h-4 w-4 text-blue-600 rounded"
-              />
-              <label htmlFor="isHero" className="text-sm font-medium text-gray-700">
-                Show in Hero Section
-              </label>
+            
+            <div className="flex items-center space-x-3 pt-4">
+              <input type="checkbox" id="isHero" name="isHero" checked={formData.isHero} onChange={handleInputChange} className="h-4 w-4 text-blue-600 rounded"/>
+              <label htmlFor="isHero" className="text-sm font-medium text-gray-700">Show in Hero Section on Homepage</label>
             </div>
+
             <div className="flex items-center space-x-3">
-              <input
-                type="checkbox"
-                id="featured"
-                name="featured"
-                checked={formData.featured}
-                onChange={handleInputChange}
-                className="h-4 w-4 text-blue-600 rounded"
-              />
-              <label htmlFor="featured" className="text-sm font-medium text-gray-700">
-                Featured Tour
-              </label>
+              <input type="checkbox" id="featured" name="featured" checked={formData.featured} onChange={handleInputChange} className="h-4 w-4 text-blue-600 rounded"/>
+              <label htmlFor="featured" className="text-sm font-medium text-gray-700">Featured Tour on Tours Page</label>
             </div>
-            <div className="flex justify-end pt-4">
-              <Link
-                href="/admin"
-                className="text-gray-600 px-6 py-2 rounded-lg border border-gray-300 hover:bg-gray-100 mr-4"
-              >
+
+            {/* Submit */}
+            <div className="flex justify-end pt-6">
+              <Link href="/admin/tours" className="text-gray-600 px-6 py-2 rounded-lg border border-gray-300 hover:bg-gray-100 mr-4">
                 Cancel
               </Link>
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full md:w-auto bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
-              >
-                {isSubmitting ? 'Creating...' : 'Create Tour'}
+              <button type="submit" disabled={isSubmitting} className="px-6 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50">
+                {isSubmitting ? "Creating..." : "Create Tour"}
               </button>
             </div>
           </form>

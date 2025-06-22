@@ -3,8 +3,7 @@
 import { useState, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import ImageUpload from "../../../../components/ImageUpload";
-import GalleryUpload from "../../../../components/GalleryUpload";
+import ImageUploader from "../../../../components/ImageUploader";
 import { generateSlug } from "../../../../lib/utils";
 import Image from "next/image";
 
@@ -240,15 +239,17 @@ export default function EditTour({ params }) {
               <textarea id="description" name="description" value={formData.description} onChange={handleInputChange} required rows={6} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 bg-white"></textarea>
             </div>
 
-            <ImageUpload 
-              onImageUpload={handleImageUpload}
-              currentImage={formData.imageUrl}
+            <ImageUploader 
+              onUpload={handleImageUpload}
+              initialUrls={formData.imageUrl ? [formData.imageUrl] : []}
               label="Main Tour Image *"
             />
 
-            <GalleryUpload 
-              onGalleryUpload={handleGalleryUpload}
-              currentGallery={formData.gallery}
+            <ImageUploader 
+              onUpload={handleGalleryUpload}
+              initialUrls={formData.gallery}
+              label="Tour Gallery"
+              multiple
             />
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
