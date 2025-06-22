@@ -4,6 +4,7 @@ import { useState, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import ImageUpload from "../../../../components/ImageUpload";
+import GalleryUpload from "../../../../components/GalleryUpload";
 import { generateSlug } from "../../../../lib/utils";
 import Image from "next/image";
 
@@ -26,6 +27,7 @@ export default function EditTour({ params }) {
     included: [],
     excluded: [],
     itinerary: [],
+    gallery: [],
   });
   const [travelThemes, setTravelThemes] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -68,6 +70,7 @@ export default function EditTour({ params }) {
           included: tour.included || [],
           excluded: tour.excluded || [],
           itinerary: tour.itinerary || [],
+          gallery: tour.gallery || [],
         });
 
       } catch (err) {
@@ -145,6 +148,13 @@ export default function EditTour({ params }) {
     }));
   };
 
+  const handleGalleryUpload = (urls) => {
+    setFormData((prev) => ({
+      ...prev,
+      gallery: urls,
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSaving(true);
@@ -156,6 +166,7 @@ export default function EditTour({ params }) {
         included: formData.included.filter(item => item),
         excluded: formData.excluded.filter(item => item),
         itinerary: formData.itinerary.filter(item => item.short && item.long),
+        gallery: formData.gallery.filter(item => item),
       };
 
       const response = await fetch(`/api/tours/${slug}`, {
@@ -228,6 +239,17 @@ export default function EditTour({ params }) {
               <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">Description *</label>
               <textarea id="description" name="description" value={formData.description} onChange={handleInputChange} required rows={6} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 bg-white"></textarea>
             </div>
+
+            <ImageUpload 
+              onImageUpload={handleImageUpload}
+              currentImage={formData.imageUrl}
+              label="Main Tour Image *"
+            />
+
+            <GalleryUpload 
+              onGalleryUpload={handleGalleryUpload}
+              currentGallery={formData.gallery}
+            />
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
@@ -330,14 +352,6 @@ export default function EditTour({ params }) {
               >
                 + Add Day
               </button>
-            </div>
-
-            <div>
-              <ImageUpload
-                onImageUpload={handleImageUpload}
-                label="Tour Image *"
-                currentImage={formData.imageUrl}
-              />
             </div>
 
             <div className="flex items-center space-x-3">

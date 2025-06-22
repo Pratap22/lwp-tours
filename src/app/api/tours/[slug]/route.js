@@ -35,7 +35,7 @@ export async function PUT(request, { params }) {
     const body = await request.json();
     
     // Validate required fields
-    const { title, slug: newSlug, description, duration, price, imageUrl, groupSize, difficulty, bestTime, travelTheme, itinerary, excluded } = body;
+    const { title, slug: newSlug, description, duration, price, imageUrl, groupSize, difficulty, bestTime, travelTheme, itinerary, excluded, gallery } = body;
     
     const requiredFields = {
       title,
@@ -97,7 +97,8 @@ export async function PUT(request, { params }) {
         included: body.included || currentTour?.included || [],
         travelTheme: travelTheme || '',
         itinerary: itinerary || currentTour?.itinerary || [],
-        excluded: body.excluded || currentTour?.excluded || []
+        excluded: body.excluded || currentTour?.excluded || [],
+        gallery: gallery || currentTour?.gallery || [],
       }
     };
 

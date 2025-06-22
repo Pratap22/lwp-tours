@@ -54,6 +54,13 @@ export default async function TourDetail({ params, searchParams }) {
     );
   }
 
+  const itineraryColors = [
+    { bg: 'bg-blue-500', border: 'border-blue-500' },
+    { bg: 'bg-green-500', border: 'border-green-500' },
+    { bg: 'bg-purple-500', border: 'border-purple-500' },
+    { bg: 'bg-orange-500', border: 'border-orange-500' },
+  ];
+
   return (
     <main className="bg-white min-h-[70vh] mx-auto py-20 px-4">
       <div className="max-w-6xl mx-auto">
@@ -115,18 +122,41 @@ export default async function TourDetail({ params, searchParams }) {
               <div id="tour-itinerary" className="bg-white rounded-xl shadow-lg p-8 mb-8">
                 <h2 className="text-2xl font-bold text-gray-900 mb-6">Tour Itinerary</h2>
                 <div className="space-y-6">
-                  {tour.itinerary.map((day, index) => (
-                    <div key={index} className="border-l-4 border-blue-500 pl-6">
-                      <div className="flex items-center mb-3">
-                        <div className="bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-semibold mr-3">
-                          {index + 1}
+                  {tour.itinerary.map((day, index) => {
+                    const color = itineraryColors[index % itineraryColors.length];
+                    return (
+                      <div key={index} className={`border-l-4 ${color.border} pl-6`}>
+                        <div className="flex items-center mb-3">
+                          <div className={`text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-semibold mr-3 ${color.bg}`}>
+                            {index + 1}
+                          </div>
+                          <h3 className="text-lg font-semibold text-gray-900">Day {index + 1}</h3>
                         </div>
-                        <h3 className="text-lg font-semibold text-gray-900">Day {index + 1}</h3>
+                        <div className="ml-11">
+                          <p className="text-gray-700 font-medium mb-2">{day.short}</p>
+                          <p className="text-gray-600 leading-relaxed">{day.long}</p>
+                        </div>
                       </div>
-                      <div className="ml-11">
-                        <p className="text-gray-700 font-medium mb-2">{day.short}</p>
-                        <p className="text-gray-600 leading-relaxed">{day.long}</p>
-                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Gallery Section */}
+            {tour.gallery && tour.gallery.length > 0 && (
+              <div id="tour-gallery" className="bg-white rounded-xl shadow-lg p-8 mb-8">
+                <h2 className="text-2xl font-bold text-gray-900 mb-6">Tour Gallery</h2>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  {tour.gallery.map((url, index) => (
+                    <div key={index} className="relative h-48 rounded-lg overflow-hidden group">
+                       <Image
+                        src={url}
+                        alt={`Gallery image for ${tour.title} #${index + 1}`}
+                        fill
+                        className="object-cover transition-transform duration-300 group-hover:scale-105"
+                        sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 250px"
+                      />
                     </div>
                   ))}
                 </div>

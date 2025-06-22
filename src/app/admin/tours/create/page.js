@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import ImageUpload from '../../../components/ImageUpload';
+import GalleryUpload from '../../../components/GalleryUpload';
 import { generateSlug } from '../../../lib/utils';
 
 export default function CreateTour() {
@@ -24,6 +25,7 @@ export default function CreateTour() {
     included: [''],
     excluded: [''],
     itinerary: [{ short: '', long: '' }],
+    gallery: [],
   });
   const [travelThemes, setTravelThemes] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -65,6 +67,10 @@ export default function CreateTour() {
 
   const handleImageUpload = (url) => {
     setFormData(prev => ({ ...prev, imageUrl: url }));
+  };
+
+  const handleGalleryUpload = (urls) => {
+    setFormData(prev => ({ ...prev, gallery: urls }));
   };
 
   const handleIncludedChange = (index, value) => {
@@ -134,6 +140,7 @@ export default function CreateTour() {
           included: formData.included.filter(item => item),
           excluded: formData.excluded.filter(item => item),
           itinerary: formData.itinerary.filter(item => item.short && item.long),
+          gallery: formData.gallery.filter(item => item),
         }),
       });
 
@@ -223,6 +230,11 @@ export default function CreateTour() {
                 placeholder="Describe the tour experience, highlights, and what makes it special..."
               />
             </div>
+
+            <ImageUpload onImageUpload={handleImageUpload} label="Main Tour Image *" />
+
+            <GalleryUpload onGalleryUpload={handleGalleryUpload} />
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label htmlFor="duration" className="block text-sm font-medium text-gray-700 mb-2">
@@ -420,9 +432,6 @@ export default function CreateTour() {
               >
                 + Add Day
               </button>
-            </div>
-            <div>
-              <ImageUpload onUpload={handleImageUpload} label="Tour Image *" />
             </div>
             <div className="flex items-center space-x-3">
               <input

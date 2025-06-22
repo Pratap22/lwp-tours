@@ -18,6 +18,7 @@ const TourSchema = new mongoose.Schema({
     short: { type: String, required: true },
     long: { type: String, required: true }
   }],
+  gallery: [{ type: String }],
   isHero: { type: Boolean, default: false },
   featured: { type: Boolean, default: false, required: false },
 });

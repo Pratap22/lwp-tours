@@ -24,7 +24,7 @@ export async function POST(request) {
     const body = await request.json();
     
     // Validate required fields
-    const { title, slug, description, duration, price, imageUrl, groupSize, difficulty, bestTime, included, excluded, travelTheme, itinerary } = body;
+    const { title, slug, description, duration, price, imageUrl, groupSize, difficulty, bestTime, included, excluded, travelTheme, itinerary, gallery, isHero, featured } = body;
     
     const requiredFields = {
       title,
@@ -77,6 +77,9 @@ export async function POST(request) {
       excluded: excluded || [],
       travelTheme: travelTheme || '',
       itinerary: itinerary || [],
+      gallery: gallery || [],
+      isHero: isHero || false,
+      featured: featured || false,
     });
 
     await tour.save();
