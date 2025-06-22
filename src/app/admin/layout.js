@@ -4,11 +4,34 @@ import { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { Toaster } from 'react-hot-toast';
+import {
+  HomeIcon,
+  DocumentTextIcon,
+  TicketIcon,
+  PencilIcon,
+  KeyIcon,
+  ArrowRightOnRectangleIcon,
+  Bars3Icon,
+  XMarkIcon
+} from '@heroicons/react/24/outline';
+
+const navigation = [
+  { name: 'Content', href: '/admin/content', icon: DocumentTextIcon },
+  { name: 'Tours', href: '/admin/tours', icon: TicketIcon },
+  { name: 'Pages', href: '/admin/pages', icon: PencilIcon },
+  { name: 'Blog', href: '/admin/blogs', icon: PencilIcon },
+  { name: 'Security', href: '/admin/change-password', icon: KeyIcon },
+];
+
+function classNames(...classes) {
+  return classes.filter(Boolean).join(' ');
+}
 
 export default function AdminLayout({ children }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
 
@@ -156,32 +179,75 @@ export default function AdminLayout({ children }) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div>
       <Toaster position="bottom-right" reverseOrder={false} />
-      {/* Admin Header */}
-      <header className="bg-white shadow-sm border-b fixed top-0 left-0 right-0 z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
-              <h1 className="text-xl font-semibold text-gray-900">Admin Panel</h1>
-            </div>
-            <div className="flex items-center space-x-4">
-              <Link href="/" className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors">
-                Go to Home
-              </Link>
-              <button
-                onClick={handleLogout}
-                className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors"
-              >
-                Logout
-              </button>
-            </div>
-          </div>
-        </div>
-      </header>
+      {/* Mobile menu button */}
+      <div className="sticky top-0 z-40 flex items-center gap-x-6 bg-white px-4 py-4 shadow-sm sm:px-6 lg:hidden">
+        <button type="button" className="-m-2.5 p-2.5 text-gray-700 lg:hidden" onClick={() => setSidebarOpen(true)}>
+          <span className="sr-only">Open sidebar</span>
+          <Bars3Icon className="h-6 w-6" aria-hidden="true" />
+        </button>
+        <div className="flex-1 text-sm font-semibold leading-6 text-gray-900">Admin</div>
+      </div>
 
-      {/* Main Content */}
-      <main className="pt-16">{children}</main>
+      {/* Static sidebar for desktop */}
+      <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
+        <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6 pb-4">
+          <div className="flex h-16 shrink-0 items-center">
+            <h1 className="text-2xl font-bold text-gray-900">Admin Panel</h1>
+          </div>
+          <nav className="flex flex-1 flex-col">
+            <ul role="list" className="flex flex-1 flex-col gap-y-7">
+              <li>
+                <ul role="list" className="-mx-2 space-y-1">
+                  {navigation.map((item) => (
+                    <li key={item.name}>
+                      <Link
+                        href={item.href}
+                        className={classNames(
+                          pathname.startsWith(item.href)
+                            ? 'bg-gray-50 text-blue-600'
+                            : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50',
+                          'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold'
+                        )}
+                      >
+                        <item.icon
+                          className={classNames(
+                            pathname.startsWith(item.href) ? 'text-blue-600' : 'text-gray-400 group-hover:text-blue-600',
+                            'h-6 w-6 shrink-0'
+                          )}
+                          aria-hidden="true"
+                        />
+                        {item.name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </li>
+              <li className="mt-auto">
+                <Link
+                  href="/"
+                  className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-700 hover:bg-gray-50 hover:text-blue-600"
+                >
+                  <HomeIcon className="h-6 w-6 shrink-0 text-gray-400 group-hover:text-blue-600" aria-hidden="true" />
+                  Go to Home
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-700 hover:bg-gray-50 hover:text-blue-600 w-full mt-2"
+                >
+                  <ArrowRightOnRectangleIcon className="h-6 w-6 shrink-0 text-gray-400 group-hover:text-blue-600" aria-hidden="true" />
+                  Logout
+                </button>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+
+      <main className="py-10 lg:pl-72">
+        <div className="px-4 sm:px-6 lg:px-8">{children}</div>
+      </main>
     </div>
   );
 } 

@@ -83,3 +83,35 @@ body {
 .animate-fade-in {
   animation: fadeIn 0.3s ease-out;
 }
+
+.tiptap ul {
+  list-style-type: disc !important;
+  padding-left: 2rem !important;
+}
+
+.tiptap ol {
+  list-style-type: decimal !important;
+  padding-left: 2rem !important;
+}
+
+.tiptap blockquote {
+    border-left-width: 4px !important;
+    border-left-color: #6b7280 !important;
+    padding-left: 1rem !important;
+    margin-left: 0 !important;
+}
+
+.tiptap pre {
+  background: #0D0D0D !important;
+  color: #fff !important;
+  font-family: 'JetBrainsMono', monospace !important;
+  padding: 0.75rem 1rem !important;
+  border-radius: 0.5rem !important;
+}
+
+.tiptap pre code {
+  color: inherit !important;
+  padding: 0 !important;
+  background: none !important;
+  font-size: 0.8rem !important;
+}
