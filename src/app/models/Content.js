@@ -9,6 +9,14 @@ const themeSchema = new mongoose.Schema({
   order: { type: Number, default: 0 }
 });
 
+const navigationItemSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  href: { type: String },
+  isActive: { type: Boolean, default: true },
+  order: { type: Number, default: 0 },
+  children: [{ type: mongoose.Schema.Types.Mixed }] // Use Mixed type for nested items
+}, { _id: false });
+
 const sectionSchemaDefinition = {
   sectionId: { type: String, required: true, unique: true },
   order: { type: Number, required: true },
@@ -92,17 +100,14 @@ const sectionSchemaDefinition = {
     isActive: { type: Boolean, default: true },
     order: { type: Number, default: 0 }
   }, { _id: false })],
-  navigationItems: [new mongoose.Schema({
-    name: { type: String },
-    href: { type: String },
-    isActive: { type: Boolean, default: true },
-    order: { type: Number, default: 0 }
-  }, { _id: false })]
+  navigationItems: [navigationItemSchema]
 };
 
 const SectionSchema = new mongoose.Schema(sectionSchemaDefinition, { _id: false });
 
 const ContentSchema = new mongoose.Schema({
+  siteName: { type: String, default: 'Bhutan Travel' },
+  siteLogo: { type: String, default: '/logo.svg' },
   sections: [SectionSchema],
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }

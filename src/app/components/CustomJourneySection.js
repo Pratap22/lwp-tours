@@ -19,7 +19,7 @@ export default function CustomJourneySection({ content }) {
               {content.content || "At Bhutan Travel Center, we create more than just trips—we craft personalized experiences. Whether you're looking for deep cultural immersion, exclusive adventures or a romantic getaway, we design seamless journeys tailored to your needs."}
             </p>
             <Link
-              href="/contact-us"
+              href={content.ctaLink || "/contact-us"}
               className="inline-block bg-blue-600 text-white px-8 py-3 rounded-full text-lg font-semibold hover:bg-blue-700 transition-colors duration-200"
             >
               {content.ctaText || "speak to us"}

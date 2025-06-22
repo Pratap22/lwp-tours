@@ -1,23 +1,8 @@
 "use client";
-import { useState } from 'react';
 
-export default function CustomJourneySection({ content, onSave, saving, showSaveButton = true }) {
-  const [isActive, setIsActive] = useState(content.isActive);
-  const [title, setTitle] = useState(content.title || '');
-  const [contentText, setContentText] = useState(content.content || '');
-  const [ctaText, setCtaText] = useState(content.ctaText || '');
-  const [themeTitle, setThemeTitle] = useState(content.themeTitle || '');
-  const [themeContent, setThemeContent] = useState(content.themeContent || '');
-
-  const handleSave = () => {
-    onSave({
-      isActive,
-      title,
-      content: contentText,
-      ctaText,
-      themeTitle,
-      themeContent
-    });
+export default function CustomJourneySection({ content, onSave, saving }) {
+  const handleInputChange = (field, value) => {
+    onSave({ ...content, [field]: value });
   };
 
   return (
@@ -28,21 +13,13 @@ export default function CustomJourneySection({ content, onSave, saving, showSave
           <label className="flex items-center">
             <input
               type="checkbox"
-              checked={isActive}
-              onChange={(e) => setIsActive(e.target.checked)}
+              checked={content?.isActive ?? true}
+              onChange={(e) => handleInputChange('isActive', e.target.checked)}
               className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              disabled={saving}
             />
             <span className="ml-2 text-gray-700">Show Section</span>
           </label>
-          {showSaveButton && (
-            <button
-              onClick={handleSave}
-              disabled={saving}
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
-            >
-              {saving ? 'Saving...' : 'Save Changes'}
-            </button>
-          )}
         </div>
       </div>
 
@@ -53,9 +30,10 @@ export default function CustomJourneySection({ content, onSave, saving, showSave
           </label>
           <input
             type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white"
+            value={content?.title || ''}
+            onChange={(e) => handleInputChange('title', e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 bg-white"
+            disabled={saving}
           />
         </div>
 
@@ -64,24 +42,41 @@ export default function CustomJourneySection({ content, onSave, saving, showSave
             Main Content
           </label>
           <textarea
-            value={contentText}
-            onChange={(e) => setContentText(e.target.value)}
+            value={content?.content || ''}
+            onChange={(e) => handleInputChange('content', e.target.value)}
             rows={4}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 bg-white"
             placeholder="Enter the main content..."
+            disabled={saving}
           />
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            CTA Button Text
-          </label>
-          <input
-            type="text"
-            value={ctaText}
-            onChange={(e) => setCtaText(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white"
-          />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              CTA Button Text
+            </label>
+            <input
+              type="text"
+              value={content?.ctaText || ''}
+              onChange={(e) => handleInputChange('ctaText', e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 bg-white"
+              disabled={saving}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              CTA Button Link
+            </label>
+            <input
+              type="text"
+              value={content?.ctaLink || ''}
+              onChange={(e) => handleInputChange('ctaLink', e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 bg-white"
+              placeholder="e.g., /contact-us"
+              disabled={saving}
+            />
+          </div>
         </div>
 
         <div>
@@ -90,9 +85,10 @@ export default function CustomJourneySection({ content, onSave, saving, showSave
           </label>
           <input
             type="text"
-            value={themeTitle}
-            onChange={(e) => setThemeTitle(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white"
+            value={content?.themeTitle || ''}
+            onChange={(e) => handleInputChange('themeTitle', e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 bg-white"
+            disabled={saving}
           />
         </div>
 
@@ -101,11 +97,12 @@ export default function CustomJourneySection({ content, onSave, saving, showSave
             Theme Box Content
           </label>
           <textarea
-            value={themeContent}
-            onChange={(e) => setThemeContent(e.target.value)}
+            value={content?.themeContent || ''}
+            onChange={(e) => handleInputChange('themeContent', e.target.value)}
             rows={3}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 bg-white"
             placeholder="Enter the theme box content..."
+            disabled={saving}
           />
         </div>
       </div>

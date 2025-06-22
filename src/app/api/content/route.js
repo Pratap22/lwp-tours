@@ -233,9 +233,23 @@ export async function GET() {
     if (!content) {
       content = await Content.create({
         sections: defaultSections,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        siteName: 'Bhutan Travel',
+        siteLogo: '/logo.svg',
       });
+    } else {
+      // Check for missing sections and add them
+      let missingSections = false;
+      defaultSections.forEach(defaultSection => {
+        if (!content.sections.some(s => s.sectionId === defaultSection.sectionId)) {
+          content.sections.push(defaultSection);
+          missingSections = true;
+        }
+      });
+
+      // If we added missing sections, save the document
+      if (missingSections) {
+        await content.save();
+      }
     }
     
     return NextResponse.json(content);
@@ -253,19 +267,44 @@ export async function PUT(request) {
     await dbConnect();
     const body = await request.json();
     
-    // Update or create content
-    const content = await Content.findOneAndUpdate(
-      {}, // Find any document
-      { 
-        ...body,
-        updatedAt: new Date()
-      },
-      { 
-        new: true, 
-        upsert: true, // Create if doesn't exist
-        runValidators: true 
-      }
-    );
+    // Get the existing content document
+    let content = await Content.findOne();
+    
+    if (!content) {
+      return NextResponse.json({ error: 'Content not found' }, { status: 404 });
+    }
+
+    // Update site-wide settings if provided
+    if (body.siteName) {
+      content.siteName = body.siteName;
+    }
+    if (body.siteLogo !== undefined) {
+      content.siteLogo = body.siteLogo;
+    }
+
+    // Update sections
+    if (body.sections && Array.isArray(body.sections)) {
+      body.sections.forEach(updatedSection => {
+        const sectionIndex = content.sections.findIndex(
+          s => s.sectionId === updatedSection.sectionId
+        );
+
+        if (sectionIndex > -1) {
+          // Update existing section
+          content.sections[sectionIndex] = { 
+            ...content.sections[sectionIndex],
+            ...updatedSection 
+          };
+        } else {
+          // Add new section if it doesn't exist
+          content.sections.push(updatedSection);
+        }
+      });
+    }
+
+    content.updatedAt = new Date();
+    await content.save();
+
     return NextResponse.json(content);
   } catch (error) {
     console.error('Error updating content:', error);

@@ -35,10 +35,18 @@ export default function ImageUploader({
     let uploadedUrls = [];
 
     for (const file of files) {
-      if (!file.type.startsWith('image/') || file.size > 5 * 1024 * 1024) {
-        console.warn(`Skipping invalid file: ${file.name}`);
+      const isImage = file.type.startsWith('image/');
+      const isSvg = file.type === 'image/svg+xml';
+      
+      if (!isImage && !isSvg) {
+        alert(`Skipping invalid file type: ${file.name}`);
         continue;
       }
+      if (file.size > 5 * 1024 * 1024) {
+        alert(`File is too large: ${file.name}`);
+        continue;
+      }
+
       try {
         const formData = new FormData();
         formData.append('file', file);
@@ -138,13 +146,13 @@ export default function ImageUploader({
               <p className="text-sm text-gray-600">
                 <button type="button" onClick={() => fileInputRef.current?.click()} className="text-blue-600 hover:text-blue-500 font-medium">Click to upload</button> or drag and drop
               </p>
-              <p className="text-xs text-gray-500 mt-1">PNG, JPG up to 5MB</p>
+              <p className="text-xs text-gray-500 mt-1">PNG, JPG, SVG up to 5MB</p>
             </div>
           )}
         </div>
       )}
 
-      <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileSelect} multiple={multiple} className="hidden" />
+      <input ref={fileInputRef} type="file" accept="image/*,image/svg+xml" onChange={handleFileSelect} multiple={multiple} className="hidden" />
 
       {(multiple || !hasImages) && (
         <div className="flex items-center space-x-2">

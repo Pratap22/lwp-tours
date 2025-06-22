@@ -16,6 +16,7 @@ import TestimonialsSection from './components/TestimonialsSection';
 import BookingProcessSection from './components/BookingProcessSection';
 import SmallGroupToursSection from './components/SmallGroupToursSection';
 import NavigationSection from './components/NavigationSection';
+import SiteSettingsSection from './components/SiteSettingsSection';
 
 const HomepageHeader = memo(() => (
   <div className="bg-white shadow-sm border-b border-gray-200">
@@ -42,51 +43,74 @@ const HomepageHeader = memo(() => (
 ));
 HomepageHeader.displayName = 'HomepageHeader';
 
-const HomepageSidebar = memo(({ sections, activeTab, onTabClick, onMoveSection, tabs }) => (
-  <div className="lg:col-span-3 sticky top-8 h-fit">
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-      <div className="p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Homepage Sections</h2>
-        <p className="text-sm text-gray-600 mb-4">Drag to reorder • Click to edit</p>
-        
-        <div className="space-y-2">
-          {sections.map((section, index) => {
-            const tab = tabs.find(t => t.id === section.sectionId);
-            const isActive = activeTab === section.sectionId;
-            const isSectionActive = section?.isActive !== false;
-            
-            return (
-              <div
-                key={section.sectionId}
-                draggable
-                onDragStart={(e) => e.dataTransfer.setData('text/plain', index)}
-                onDragOver={(e) => e.preventDefault()}
-                onDrop={(e) => {
-                  e.preventDefault();
-                  const fromIndex = e.dataTransfer.getData('text/plain');
-                  onMoveSection(Number(fromIndex), index);
-                }}
-                onClick={() => onTabClick(section.sectionId)}
-                className={`group flex items-center justify-between p-3 rounded-md cursor-pointer transition-all duration-200 ${isActive ? 'bg-blue-50 border-l-4 border-blue-500' : 'hover:bg-gray-100'} ${isSectionActive ? '' : 'opacity-50'}`}
-              >
-                <div className="flex items-center gap-3">
-                  <span className="text-xl">{tab?.icon || '📄'}</span>
-                  <span className={`font-medium ${isActive ? 'text-blue-600' : 'text-gray-700'}`}>
-                    {tab?.name || section.sectionId}
-                  </span>
+const HomepageSidebar = memo(({ sections, activeTab, onTabClick, onMoveSection, tabs }) => {
+  const siteSettingsTab = tabs.find(t => t.id === 'siteSettings');
+  const navigationTab = tabs.find(t => t.id === 'navigation');
+
+  return (
+    <div className="lg:col-span-3 sticky top-8 h-fit">
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+        <div className="p-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">Website Settings</h2>
+          <div className="space-y-2 mb-6">
+            {[siteSettingsTab, navigationTab].map(tab => {
+              if (!tab) return null;
+              const isActive = activeTab === tab.id;
+              return (
+                <div
+                  key={tab.id}
+                  onClick={() => onTabClick(tab.id)}
+                  className={`group flex items-center gap-3 p-3 rounded-md cursor-pointer transition-all duration-200 ${isActive ? 'bg-blue-50 border-l-4 border-blue-500' : 'hover:bg-gray-100'}`}
+                >
+                  <span className="text-xl">{tab.icon}</span>
+                  <span className={`font-medium ${isActive ? 'text-blue-600' : 'text-gray-700'}`}>{tab.name}</span>
                 </div>
-                <span className="text-gray-400 group-hover:text-gray-600">☰</span>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
+
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">Homepage Sections</h2>
+          <p className="text-sm text-gray-600 mb-4">Drag to reorder • Click to edit</p>
+          
+          <div className="space-y-2">
+            {sections.map((section, index) => {
+              const tab = tabs.find(t => t.id === section.sectionId);
+              const isActive = activeTab === section.sectionId;
+              const isSectionActive = section?.isActive !== false;
+              
+              return (
+                <div
+                  key={section.sectionId}
+                  draggable
+                  onDragStart={(e) => e.dataTransfer.setData('text/plain', index)}
+                  onDragOver={(e) => e.preventDefault()}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    const fromIndex = e.dataTransfer.getData('text/plain');
+                    onMoveSection(Number(fromIndex), index);
+                  }}
+                  onClick={() => onTabClick(section.sectionId)}
+                  className={`group flex items-center justify-between p-3 rounded-md cursor-pointer transition-all duration-200 ${isActive ? 'bg-blue-50 border-l-4 border-blue-500' : 'hover:bg-gray-100'} ${isSectionActive ? '' : 'opacity-50'}`}
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="text-xl">{tab?.icon || '📄'}</span>
+                    <span className={`font-medium ${isActive ? 'text-blue-600' : 'text-gray-700'}`}>
+                      {tab?.name || section.sectionId}
+                    </span>
+                  </div>
+                  <span className="text-gray-400 group-hover:text-gray-600">☰</span>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
     </div>
-  </div>
-));
+  );
+});
 HomepageSidebar.displayName = 'HomepageSidebar';
 
-const SectionEditor = memo(({ activeTab, content, onSave, saving }) => {
+const SectionEditor = memo(({ activeTab, content, onSave, saving, onContentChange }) => {
   const getSectionById = (sectionId) => {
     if (!content || !content.sections) return null;
     return content.sections.find(section => section.sectionId === sectionId);
@@ -99,6 +123,29 @@ const SectionEditor = memo(({ activeTab, content, onSave, saving }) => {
     showSaveButton: false, // Hide individual save buttons
   };
 
+  const siteSettingsProps = {
+    content: { siteName: content?.siteName, siteLogo: content?.siteLogo },
+    onDataChange: (newData) => {
+      onContentChange(prev => ({...prev, ...newData}))
+    },
+    saving,
+  };
+
+  const navigationProps = {
+    content: content?.sections?.find(sec => sec.sectionId === 'navigation') || { isActive: true, navigationItems: [] },
+    onDataChange: (newData) => {
+      const updatedSections = content.sections.map(sec => 
+        sec.sectionId === 'navigation' ? newData : sec
+      );
+      // If navigation section doesn't exist, add it
+      if (!updatedSections.some(sec => sec.sectionId === 'navigation')) {
+        updatedSections.push({ sectionId: 'navigation', ...newData });
+      }
+      onContentChange(prev => ({ ...prev, sections: updatedSections }));
+    },
+    saving,
+  };
+
   const sectionMap = {
     gallery: <GallerySection {...sectionProps} />,
     awards: <AwardsSection {...sectionProps} />,
@@ -109,7 +156,8 @@ const SectionEditor = memo(({ activeTab, content, onSave, saving }) => {
     testimonials: <TestimonialsSection {...sectionProps} />,
     bookingProcess: <BookingProcessSection {...sectionProps} />,
     smallGroupTours: <SmallGroupToursSection {...sectionProps} />,
-    navigation: <NavigationSection {...sectionProps} />,
+    navigation: <NavigationSection {...navigationProps} />,
+    siteSettings: <SiteSettingsSection {...siteSettingsProps} />,
   };
   
   return (
@@ -168,14 +216,20 @@ export default function ContentManagement() {
   const saveContent = async (sectionId, data) => {
     setSaving(true);
     try {
-      const updatedSections = content.sections.map(sec => 
-        sec.sectionId === sectionId ? { ...sec, ...data } : sec
-      );
+      let body;
+      if (sectionId === 'siteSettings') {
+        body = JSON.stringify({ ...content, siteName: data.siteName, siteLogo: data.siteLogo });
+      } else {
+        const updatedSections = content.sections.map(sec => 
+          sec.sectionId === sectionId ? { ...sec, ...data } : sec
+        );
+        body = JSON.stringify({ ...content, sections: updatedSections });
+      }
 
       const response = await fetch('/api/content', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...content, sections: updatedSections }),
+        body,
       });
 
       if (response.ok) {
@@ -195,10 +249,24 @@ export default function ContentManagement() {
   };
 
   const handleSave = () => {
-    // Get the current section data and save it
-    const currentSection = content.sections.find(sec => sec.sectionId === activeTab);
-    if (currentSection) {
-      saveContent(activeTab, currentSection);
+    // The data for the active tab is now always in the main `content` state
+    if (activeTab === 'siteSettings') {
+      saveContent(activeTab, { siteName: content.siteName, siteLogo: content.siteLogo });
+    } else {
+      const currentSectionData = content.sections.find(sec => sec.sectionId === activeTab);
+      if (currentSectionData) {
+        // For navigation, ensure we also handle the "Get Started" -> "Contact Us" change
+        if (activeTab === 'navigation') {
+          const updatedNavItems = currentSectionData.navigationItems.map(item => 
+            item.name === 'Get Started' ? { ...item, name: 'Contact Us' } : item
+          );
+          saveContent(activeTab, { ...currentSectionData, navigationItems: updatedNavItems });
+        } else {
+          saveContent(activeTab, currentSectionData);
+        }
+      } else {
+        toast.error("Could not find data to save for the current section.");
+      }
     }
   };
 
@@ -260,11 +328,13 @@ export default function ContentManagement() {
 
   const getSortedSections = () => {
     if (!content || !content.sections) return [];
-    const homeSections = content.sections.filter(sec => !['about-us', 'why-us', 'travel-info'].includes(sec.sectionId));
+    const homeSections = content.sections.filter(sec => !['about-us', 'why-us', 'travel-info', 'navigation', 'siteSettings'].includes(sec.sectionId));
     return [...homeSections].sort((a, b) => a.order - b.order);
   };
 
   const tabs = useMemo(() => [
+    { id: 'siteSettings', name: 'Site Settings', icon: '⚙️' },
+    { id: 'navigation', name: 'Navigation', icon: '🧭' },
     { id: 'gallery', name: 'Gallery', icon: '📷' },
     { id: 'awards', name: 'Awards', icon: '🏆' },
     { id: 'aboutBhutan', name: 'About Bhutan', icon: '📖' },
@@ -274,7 +344,6 @@ export default function ContentManagement() {
     { id: 'testimonials', name: 'Testimonials', icon: '💬' },
     { id: 'bookingProcess', name: 'Booking Process', icon: '📋' },
     { id: 'smallGroupTours', name: 'Small Group Tours', icon: '👥' },
-    { id: 'navigation', name: 'Navigation', icon: '🧭' },
   ], []);
 
   if (loading) {
@@ -309,6 +378,7 @@ export default function ContentManagement() {
             content={content}
             onSave={saveContent}
             saving={saving}
+            onContentChange={setContent}
           />
         </div>
       </div>
