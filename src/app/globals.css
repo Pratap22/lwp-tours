@@ -54,11 +54,25 @@ body {
 
 @keyframes scroll {
   0% { transform: translateX(0); }
-  100% { transform: translateX(-100%); }
+  100% { transform: translateX(-50%); }
 }
 
 .animate-scroll {
   animation: scroll 40s linear infinite;
+  animation-play-state: running;
+}
+
+.animation-pause {
+  animation-play-state: paused;
+}
+
+@keyframes scroll-full {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-scroll-full {
+  animation: scroll-full 40s linear infinite;
 }
 
 @keyframes fadeIn {

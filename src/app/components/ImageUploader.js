@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 
 export default function ImageUploader({
@@ -10,15 +10,17 @@ export default function ImageUploader({
   label = 'Image'
 }) {
   const [isUploading, setIsUploading] = useState(false);
-  const [imageUrls, setImageUrls] = useState(initialUrls);
+  const [imageUrls, setImageUrls] = useState(() => Array.isArray(initialUrls) ? initialUrls : (initialUrls ? [initialUrls] : []));
   const [linkInput, setLinkInput] = useState('');
   const fileInputRef = useRef(null);
+
+  const stableInitialUrls = useMemo(() => JSON.stringify(initialUrls), [initialUrls]);
 
   useEffect(() => {
     // Ensure initialUrls is always treated as an array
     const urls = Array.isArray(initialUrls) ? initialUrls : (initialUrls ? [initialUrls] : []);
     setImageUrls(urls);
-  }, [initialUrls]);
+  }, [stableInitialUrls]);
 
   const handleUploadResult = (newUrls) => {
     const finalUrls = multiple ? newUrls : newUrls[0] || '';

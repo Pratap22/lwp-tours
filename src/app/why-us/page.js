@@ -1,47 +1,77 @@
+'use client';
+
 import Image from "next/image";
 import Link from "next/link";
 import { UsersIcon, MapPinIcon, HeartIcon, PhoneIcon, CheckBadgeIcon, StarIcon } from '@heroicons/react/24/outline';
+import { useState, useEffect } from 'react';
 
 export default function WhyUs() {
-  const differentiators = [
-    {
-      icon: UsersIcon,
-      title: 'Local Experts, Global Standards',
-      description: 'Our team is 100% local, born and raised in Bhutan. We combine our deep, personal knowledge with international standards of service to give you an unparalleled, authentic experience.'
-    },
-    {
-      icon: MapPinIcon,
-      title: 'Truly Tailor-Made Journeys',
-      description: 'Your adventure is yours alone. We don\'t do cookie-cutter tours. We listen to your interests and craft a personalized itinerary that matches your dream trip perfectly.'
-    },
-    {
-      icon: HeartIcon,
-      title: 'Sustainable & Responsible',
-      description: 'We are committed to preserving our culture and environment. We practice low-impact tourism, support local communities, and ensure your visit benefits Bhutan for generations to come.'
-    },
-    {
-      icon: PhoneIcon,
-      title: '24/7 On-the-Ground Support',
-      description: 'From the moment you arrive until you depart, we are here for you. Our team is always available to ensure your journey is seamless, safe, and stress-free.'
-    },
-    {
-        icon: CheckBadgeIcon,
-        title: 'Uncompromising Quality',
-        description: 'We meticulously select our partner hotels, restaurants, and transport to ensure they meet our high standards of quality, comfort, and safety.'
-    },
-    {
-        icon: StarIcon,
-        title: 'Authentic Cultural Immersion',
-        description: 'Go beyond the tourist spots. We connect you with local families, artisans, and monks for genuine interactions that create lasting memories.'
-    }
-  ];
+  const [pageData, setPageData] = useState(null);
+  const [testimonials, setTestimonials] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPageData = async () => {
+      try {
+        const response = await fetch('/api/content');
+        const data = await response.json();
+        const whyUsSection = data.sections?.find(section => section.sectionId === 'why-us');
+        const testimonialsSection = data.sections?.find(section => section.sectionId === 'testimonials');
+        
+        setPageData(whyUsSection);
+        if (testimonialsSection?.testimonials) {
+          setTestimonials(testimonialsSection.testimonials.filter(t => t.isActive));
+        }
+
+      } catch (error) {
+        console.error('Error fetching page data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPageData();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!pageData) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-gray-600">Page content not found.</p>
+        </div>
+      </div>
+    );
+  }
+
+  const getIconComponent = (iconName) => {
+    const iconMap = {
+      'UsersIcon': UsersIcon,
+      'MapPinIcon': MapPinIcon,
+      'HeartIcon': HeartIcon,
+      'PhoneIcon': PhoneIcon,
+      'CheckBadgeIcon': CheckBadgeIcon,
+      'StarIcon': StarIcon,
+    };
+    return iconMap[iconName] || UsersIcon;
+  };
 
   return (
     <div className="bg-white">
       {/* Hero Section */}
       <div className="relative bg-gray-800 h-96">
         <Image
-          src="/gallery-1.jpg"
+          src={pageData.hero?.image || "/gallery-1.jpg"}
           alt="Why Us Background"
           layout="fill"
           objectFit="cover"
@@ -49,76 +79,83 @@ export default function WhyUs() {
         />
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="text-center text-white p-4">
-            <h1 className="text-5xl font-extrabold mb-4 text-shadow">Why Travel with Us?</h1>
+            <h1 className="text-5xl font-extrabold mb-4 text-shadow">{pageData.hero?.title || 'Why Travel with Us?'}</h1>
             <p className="text-xl max-w-3xl text-shadow">
-              Experience Bhutan differently. Discover the genuine connection, expertise, and passion that set us apart.
+              {pageData.hero?.subtitle || 'Experience Bhutan differently. Discover the genuine connection, expertise, and passion that set us apart.'}
             </p>
           </div>
         </div>
       </div>
 
       {/* Differentiators Grid */}
-      <section className="py-24 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {pageData.reasons && pageData.reasons.length > 0 && (
+        <section className="py-24 bg-gray-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
-                <h2 className="text-4xl font-bold text-gray-900 mb-4">The LWP Travel & Tours Difference</h2>
-                <p className="text-lg text-gray-600">What makes our journeys unforgettable.</p>
+              <h2 className="text-4xl font-bold text-gray-900 mb-4">{pageData.title || 'The LWP Travel & Tours Difference'}</h2>
+              <p className="text-lg text-gray-600">{pageData.subtitle || 'What makes our journeys unforgettable.'}</p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-                {differentiators.map((item, index) => (
-                    <div key={index} className="text-center p-8 bg-white rounded-xl shadow-md card-hover">
-                        <item.icon className="h-12 w-12 text-blue-600 mx-auto mb-6"/>
-                        <h3 className="text-2xl font-bold text-gray-900 mb-3">{item.title}</h3>
-                        <p className="text-gray-600">{item.description}</p>
-                    </div>
-                ))}
+              {pageData.reasons.map((item, index) => {
+                const IconComponent = getIconComponent(item.icon);
+                return (
+                  <div key={index} className="text-center p-8 bg-white rounded-xl shadow-md card-hover">
+                    <IconComponent className="h-12 w-12 text-blue-600 mx-auto mb-6"/>
+                    <h3 className="text-2xl font-bold text-gray-900 mb-3">{item.title}</h3>
+                    <p className="text-gray-600">{item.description}</p>
+                  </div>
+                );
+              })}
             </div>
-        </div>
-      </section>
+          </div>
+        </section>
+      )}
       
       {/* Testimonial Spotlight */}
-      <section className="py-24 bg-blue-600 text-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="flex justify-center mb-4">
-            {[...Array(5)].map((_, i) => (
-              <StarIcon key={i} className="w-8 h-8 text-yellow-400" />
-            ))}
+      {testimonials && testimonials.length > 0 && (
+        <section className="py-20 bg-blue-600 overflow-hidden">
+          <div className="relative group">
+            <div className="flex animate-scroll-full group-hover:animate-paused">
+              {[...testimonials, ...testimonials].map((testimonial, index) => (
+                <div key={index} className="flex-shrink-0 w-[95%] md:w-1/2">
+                  <div className="p-4 h-full">
+                    <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 text-white h-full flex flex-col justify-between">
+                      <div>
+                        <div className="flex text-yellow-300 mb-4">
+                          {[...Array(testimonial.rating || 5)].map((_, i) => (
+                            <StarIcon key={i} className="w-5 h-5" />
+                          ))}
+                        </div>
+                        <p className="text-lg leading-relaxed italic">&quot;{testimonial.content}&quot;</p>
+                      </div>
+                      <cite className="mt-6 text-md font-semibold not-italic self-end">- {testimonial.name}, {testimonial.location}</cite>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
-          <blockquote className="text-2xl font-light italic mb-6">
-            &ldquo;The entire trip was perfectly arranged. The guides were not just knowledgeable but truly passionate about their country. It felt less like a tour and more like visiting with good friends.&rdquo;
-          </blockquote>
-          <cite className="text-lg font-semibold not-italic">- Achim Schulz, Germany</cite>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Our Promise Section */}
-      <section className="py-24">
-        <div className="max-w-4xl mx-auto px-4 text-center">
+      {pageData.steps && pageData.steps.length > 0 && (
+        <section className="py-24">
+          <div className="max-w-4xl mx-auto px-4 text-center">
             <h2 className="text-4xl font-bold text-gray-900 mb-12">Our Promise to You</h2>
             <div className="flex flex-col md:flex-row justify-center items-center space-y-8 md:space-y-0 md:space-x-12">
-                <div className="text-center">
-                    <div className="bg-blue-100 text-blue-600 rounded-full h-24 w-24 flex items-center justify-center mx-auto mb-4">
-                        <span className="text-4xl font-bold">1</span>
-                    </div>
-                    <h3 className="text-xl font-semibold text-gray-800">Personalized Planning</h3>
+              {pageData.steps.map((step, index) => (
+                <div key={index} className="text-center">
+                  <div className="bg-blue-100 text-blue-600 rounded-full h-24 w-24 flex items-center justify-center mx-auto mb-4">
+                    <span className="text-4xl font-bold">{step.icon}</span>
+                  </div>
+                  <h3 className="text-xl font-semibold text-gray-800">{step.title}</h3>
                 </div>
-                <div className="text-gray-300 text-2xl hidden md:block">&rarr;</div>
-                <div className="text-center">
-                    <div className="bg-blue-100 text-blue-600 rounded-full h-24 w-24 flex items-center justify-center mx-auto mb-4">
-                        <span className="text-4xl font-bold">2</span>
-                    </div>
-                    <h3 className="text-xl font-semibold text-gray-800">Seamless Experience</h3>
-                </div>
-                <div className="text-gray-300 text-2xl hidden md:block">&rarr;</div>
-                <div className="text-center">
-                    <div className="bg-blue-100 text-blue-600 rounded-full h-24 w-24 flex items-center justify-center mx-auto mb-4">
-                        <span className="text-4xl font-bold">3</span>
-                    </div>
-                    <h3 className="text-xl font-semibold text-gray-800">Lasting Memories</h3>
-                </div>
+              ))}
             </div>
-        </div>
-      </section>
+          </div>
+        </section>
+      )}
 
       {/* CTA Section */}
       <section className="py-20 bg-gray-800 text-white">

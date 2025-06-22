@@ -1,6 +1,6 @@
 "use client";
 import { useState } from 'react';
-import ImageUpload from '../../../components/ImageUpload';
+import ImageUploader from '../../../components/ImageUploader';
 
 export default function GallerySection({ content, onSave, saving }) {
   const [images, setImages] = useState(content.images || []);
@@ -154,7 +154,7 @@ export default function GallerySection({ content, onSave, saving }) {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Gallery Image
                 </label>
-                <ImageUpload
+                <ImageUploader
                   currentImage={image.src}
                   onImageUpload={(imageUrl) => updateImage(index, 'src', imageUrl)}
                   folder="gallery"

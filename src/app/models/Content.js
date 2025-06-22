@@ -13,6 +13,11 @@ const sectionSchemaDefinition = {
   sectionId: { type: String, required: true, unique: true },
   order: { type: Number, required: true },
   isActive: { type: Boolean, default: true },
+  hero: {
+    title: { type: String },
+    subtitle: { type: String },
+    image: { type: String },
+  },
   title: { type: String },
   subtitle: { type: String },
   content: { type: String },
@@ -30,6 +35,25 @@ const sectionSchemaDefinition = {
     icon: { type: String },
     title: { type: String },
     description: { type: String },
+    isActive: { type: Boolean, default: true },
+    order: { type: Number, default: 0 }
+  }, { _id: false })],
+  values: [new mongoose.Schema({
+    icon: { type: String },
+    title: { type: String },
+    description: { type: String },
+    isActive: { type: Boolean, default: true },
+    order: { type: Number, default: 0 }
+  }, { _id: false })],
+  teamMembers: [new mongoose.Schema({
+    name: { type: String },
+    position: { type: String },
+    links: {
+      type: [String],
+      validate: [v => v.length <= 3, 'A team member can have a maximum of 3 links.']
+    },
+    image: { type: String },
+    bio: { type: String },
     isActive: { type: Boolean, default: true },
     order: { type: Number, default: 0 }
   }, { _id: false })],
@@ -59,6 +83,12 @@ const sectionSchemaDefinition = {
   benefits: [new mongoose.Schema({
     text: { type: String },
     description: { type: String },
+    isActive: { type: Boolean, default: true },
+    order: { type: Number, default: 0 }
+  }, { _id: false })],
+  faqs: [new mongoose.Schema({
+    title: { type: String },
+    content: { type: String },
     isActive: { type: Boolean, default: true },
     order: { type: Number, default: 0 }
   }, { _id: false })],
