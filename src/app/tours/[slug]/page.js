@@ -54,15 +54,68 @@ export default async function TourDetail({ params, searchParams }) {
     );
   }
 
+  const headersList = headers();
+  const host = headersList.get('host') || 'localhost:3000';
+  const protocol = host.startsWith('localhost') ? 'http' : 'https';
+  const baseUrl = `${protocol}://${host}`;
+
   const itineraryColors = [
     { bg: 'bg-blue-500', border: 'border-blue-500' },
     { bg: 'bg-green-500', border: 'border-green-500' },
     { bg: 'bg-purple-500', border: 'border-purple-500' },
     { bg: 'bg-orange-500', border: 'border-orange-500' },
   ];
+  
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": baseUrl
+    },{
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Tours",
+      "item": `${baseUrl}/tours`
+    },{
+      "@type": "ListItem",
+      "position": 3,
+      "name": tour.title,
+      "item": `${baseUrl}/tours/${tour.slug}`
+    }]
+  };
+
+  const tourPackageSchema = {
+    "@context": "https://schema.org",
+    "@type": "TourPackage",
+    "name": tour.title,
+    "description": tour.description,
+    "image": tour.imageUrl,
+    "url": `${baseUrl}/tours/${tour.slug}`,
+    "provider": {
+      "@type": "Organization",
+      "name": "LWP Travel & Tours",
+      "url": baseUrl
+    },
+    "offers": {
+      "@type": "Offer",
+      "price": tour.price,
+      "priceCurrency": "USD"
+    }
+  };
 
   return (
     <main className="bg-white min-h-[70vh] mx-auto py-20 px-4">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(tourPackageSchema) }}
+      />
       <div className="max-w-6xl mx-auto">
         {/* Breadcrumb */}
         <nav className="mb-8">
